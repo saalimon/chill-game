@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Puzzle } from '@/game/starbattle/types'
 import { CellState } from '@/game/starbattle/types'
+import { play } from '@/lib/sound/player'
 import {
   markCell,
   placeCell,
@@ -109,7 +110,33 @@ export function useGameSession(puzzle: Puzzle) {
     setSession((s) => resetSession(s, 0))
   }, [clock])
 
-  /** The most recently placed emoji — the solve ripple spreads from here. */
+  /**
+   * Give the board its voice.
+   *
+   * Sound is decided by watching what changed rather than by the actions, which
+   * keeps the session reducer pure and means undo, redo and hints all announce
+   * themselves without any of them having to remember to.
+   */
+  const heard = useRef({ cursor: 0, status: session.status })
+  useEffect(() => {
+    const previous = heard.current
+    heard.current = { cursor: session.cursor, status: session.status }
+
+    if (session.status !== previous.status) {
+      if (session.status === 'solved') return play('solved')
+      if (session.status === 'lost') return play('lost')
+    }
+    if (session.cursor <= previous.cursor) return
+
+    const change = session.history[session.cursor - 1]
+    if (!change) return
+    if (change.to === CellState.Wrong) play('wrong')
+    else if (change.to === CellState.Placed) play('place')
+    else if (change.to === CellState.Marked) play('mark')
+    else play('tap')
+  }, [session])
+
+  /** The most recently placed doodle — the solve ripple spreads from here. */
   const origin = useMemo(() => {
     for (let i = session.cursor - 1; i >= 0; i--) {
       const change = session.history[i]

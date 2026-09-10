@@ -1,0 +1,26 @@
+.button {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  transition:
+    color 140ms var(--ease),
+    background 140ms var(--ease);
+}
+
+.button[aria-pressed='true'] {
+  color: var(--ink-faint);
+}
+
+.button:active {
+  background: var(--paper-shade);
+  color: var(--ink);
+}
+
+.icon {
+  width: 19px;
+  height: 19px;
+  display: block;
+}

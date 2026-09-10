@@ -5,10 +5,12 @@ import { difficultyOf } from '@/game/starbattle/difficulty'
 import { formatDuration } from '@/lib/format'
 import { useGameSession } from '@/features/session/useGameSession'
 import { replayLog, type Move } from '@/features/session/session'
+import { useSound } from '@/lib/sound/useSound'
 import { Board } from './Board'
 import { DoodleSprite } from './doodles/Doodle'
 import { Lives } from './Lives'
 import { RuleStrip } from './RuleStrip'
+import { SoundToggle } from './SoundToggle'
 import { Timer } from './Timer'
 import styles from './GameScreen.module.css'
 
@@ -30,6 +32,7 @@ export function GameScreen({
   nextLabel = 'New puzzle',
 }: GameScreenProps) {
   const game = useGameSession(puzzle)
+  const sound = useSound()
   const { session } = game
   const solved = session.status === 'solved'
   const lost = session.status === 'lost'
@@ -56,8 +59,11 @@ export function GameScreen({
             ← Games
           </Link>
           <h1 className={styles.title}>{label}</h1>
-          <span className={styles.timer} aria-label="time on this puzzle">
-            <Timer read={game.readClock} frozenMs={solved ? (session.solvedAt ?? 0) : null} />
+          <span className={styles.right}>
+            <span className={styles.timer} aria-label="time on this puzzle">
+              <Timer read={game.readClock} frozenMs={solved ? (session.solvedAt ?? 0) : null} />
+            </span>
+            <SoundToggle muted={sound.muted} onToggle={sound.toggle} />
           </span>
         </header>
 

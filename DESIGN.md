@@ -90,6 +90,34 @@ The desk's grain is a small tiled SVG `data:` URI at low opacity — **not** a l
 `feTurbulence` filter, which over a full-screen layer costs real battery on a
 phone.
 
+## Sound
+
+Synthesised with the Web Audio API, not shipped as audio files: a handful of
+oscillators costs nothing to download, needs no assets precached for offline
+play, and can be tuned rather than sourced.
+
+Six sounds, all short and quiet (peak gain 0.11 or below), each a sine or
+triangle through a lowpass so nothing sounds glassy:
+
+| Sound | When | Shape |
+|---|---|---|
+| `tap` | A button | A fingertip, barely there |
+| `mark` | Ruling a square out | A short pencil stroke |
+| `place` | A doodle lands correctly | Two rising notes — the one real reward |
+| `wrong` | A wrong guess | Low and soft. It costs a life; it is not a klaxon |
+| `solved` | The board is finished | A rising arpeggio, the only sound allowed to linger |
+| `lost` | Out of guesses | The same shape, descending |
+
+Every tone has a soft attack and a long tail; a square edge on either end reads
+as a click.
+
+Which sound plays is decided by watching what changed on the board rather than
+by the actions themselves, so the session reducer stays pure and undo, redo and
+hints all announce themselves without having to remember to.
+
+The mute control sits on the game screen, in reach while playing, and is
+remembered. A game that makes noise needs the way to stop it on the same screen.
+
 ## Copy
 
 Sentence case, plain verbs. A broken rule is information, not an error: the game

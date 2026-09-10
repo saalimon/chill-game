@@ -81,8 +81,14 @@
   white-space: nowrap;
 }
 
-.timer {
+.right {
   justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.timer {
   font-family: var(--font-hand);
   font-size: 21px;
   color: var(--ink-soft);

@@ -1,14 +1,22 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { generate } from '@/game/starbattle/generate'
 import { GameScreen } from './GameScreen'
 import { glyphLabel } from './doodles/Doodle'
+import { setMuted } from '@/lib/sound/player'
 
 const puzzle = generate(2026, 5)
 
 const setup = () => userEvent.setup()
+
+// The mute setting is remembered for the life of the page, so reset it rather
+// than letting one test inherit another's choice.
+beforeEach(() => {
+  localStorage.clear()
+  setMuted(false)
+})
 
 function renderBoard(onSolved?: Parameters<typeof GameScreen>[0]['onSolved']) {
   return render(
@@ -165,5 +173,39 @@ describe('finishing', () => {
 
     expect(screen.getByText('Solved')).toBeInTheDocument()
     expect(solves).toHaveLength(1)
+  })
+})
+
+describe('sound', () => {
+  it('offers a way to turn it off while playing', async () => {
+    const user = setup()
+    renderBoard()
+    const button = screen.getByRole('button', { name: /turn sound off/i })
+    expect(button).toHaveAttribute('aria-pressed', 'false')
+
+    await user.click(button)
+
+    expect(screen.getByRole('button', { name: /turn sound on/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('remembers being muted, so it stays off next time', async () => {
+    const user = setup()
+    const first = renderBoard()
+    await user.click(screen.getByRole('button', { name: /turn sound off/i }))
+    first.unmount()
+
+    renderBoard()
+    expect(screen.getByRole('button', { name: /turn sound on/i })).toBeInTheDocument()
+  })
+
+  it('plays without an audio engine, as jsdom has none', async () => {
+    const user = setup()
+    renderBoard()
+    // Would throw if a missing AudioContext were not handled.
+    await user.click(cellAt(0, 0))
+    expect(cellAt(0, 0)).toHaveAccessibleName(/ruled out/)
   })
 })

@@ -94,6 +94,18 @@ shapes irregular.
 Generation is deterministic from a seed and takes ~15ms at 9×9 (median), so
 puzzles are made on the device, offline, with no bank to ship.
 
+### Sound
+
+Six short sounds — tap, mark, place, wrong, solved, lost — synthesised with the
+Web Audio API rather than shipped as files, so there is nothing to precache for
+offline play. Everything is quiet and soft-edged; a wrong guess is a low thud,
+not an alarm.
+
+What plays is decided by diffing the session rather than by the actions, which
+keeps the reducer pure. Muting is on the game screen and is remembered. If the
+browser has no audio engine, or blocks it, the game plays in silence rather than
+failing.
+
 ### Storage
 
 Because generation is deterministic, a stored solve is a seed plus a move list —
@@ -123,7 +135,7 @@ would otherwise lose a puzzle that was just finished.
 npm test
 ```
 
-194 tests, and the weight sits on the engine because that is the part that can
+212 tests, and the weight sits on the engine because that is the part that can
 silently produce a broken puzzle. Across 40 seeds × 5 board sizes, every
 generated board is asserted to have exactly one solution, `size` contiguous
 regions holding exactly one emoji each, an answer obeying all three rules, and
@@ -136,8 +148,9 @@ outlines close into rings and account for every boundary edge, a region enclosin
 another yields two rings, and a shared edge drifts identically from both sides.
 
 The rest covers session rules (taps, undo, hints, lives), streak arithmetic
-across month and leap-day boundaries, the offline outbox, and the board's
-interaction through the rendered DOM.
+across month and leap-day boundaries, the offline outbox, sound (including that
+it stays silent when muted and survives a browser with no audio engine), and the
+board's interaction through the rendered DOM.
 
 ## Deploying
 
