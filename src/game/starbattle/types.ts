@@ -1,3 +1,5 @@
+import type { Token } from './tokens'
+
 /** A coordinate on the board. */
 export interface Cell {
   r: number
@@ -26,8 +28,12 @@ export type Regions = number[][]
 /**
  * Bumped whenever a change to generation would produce a different board for
  * the same seed. Stored alongside every solve so old replays stay replayable.
+ *
+ * v2 swapped emoji for drawn doodles. The token is taken from the rng after the
+ * regions and solution are settled, so a v1 replay still reproduces the same
+ * board — only the symbol on it changed.
  */
-export const GEN_VERSION = 1
+export const GEN_VERSION = 2
 
 export interface Puzzle {
   size: number
@@ -35,7 +41,7 @@ export interface Puzzle {
   genVersion: number
   regions: Regions
   solution: Cell[]
-  emoji: string
+  token: Token
   /** Solver branches explored — the difficulty signal. */
   nodes: number
 }

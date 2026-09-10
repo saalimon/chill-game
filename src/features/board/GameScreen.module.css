@@ -1,14 +1,60 @@
 .screen {
-  --board-pad: 12px;
-  --chrome: 268px;
+  --board-pad: 14px;
+  --chrome: 276px;
 
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: var(--space-md);
   min-height: 100dvh;
-  padding-top: calc(var(--safe-top) + var(--space-sm));
+  padding-top: calc(var(--safe-top) + var(--space-md));
   padding-bottom: calc(var(--safe-bottom) + var(--space-md));
-  background: var(--canvas);
+}
+
+/*
+ * The sheet: one piece of paper pinned to the desk, holding everything to do
+ * with the puzzle. Its corners are unequal so it reads as cut by hand, and the
+ * shadow lifts it off the ground.
+ */
+.sheet {
+  position: relative;
+  width: calc(100vw - 2 * var(--board-pad));
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--space-sm) var(--space-md);
+  background: var(--paper);
+  border-radius: 5px 8px 6px 9px / 8px 5px 9px 6px;
+  box-shadow: var(--shadow-sheet);
+}
+
+/* The pin holding the sheet to the desk. */
+.pin {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  translate: -50% 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--pen-blue);
+  box-shadow:
+    inset -2px -3px 0 rgb(0 0 0 / 0.2),
+    1px 3px 4px var(--ground-shadow);
+}
+
+.pin::after {
+  content: '';
+  position: absolute;
+  top: 3.5px;
+  left: 4.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.6);
 }
 
 .bar {
@@ -16,34 +62,31 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--space-sm);
-  padding: 0 var(--board-pad);
+  width: 100%;
+  padding: 0 var(--space-xs);
 }
 
-/* button-ghost */
 .back {
   justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--slate);
-  font-size: var(--text-sm);
-  font-weight: 500;
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
   text-decoration: none;
   padding: var(--space-xs) var(--space-sm) var(--space-xs) 0;
 }
 
 .title {
-  font-size: var(--text-h5);
-  font-weight: 500;
+  font-family: var(--font-hand);
+  font-size: 26px;
+  line-height: 1;
   white-space: nowrap;
 }
 
 .timer {
   justify-self: end;
+  font-family: var(--font-hand);
+  font-size: 21px;
+  color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--slate);
 }
 
 .status {
@@ -51,58 +94,56 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  padding: 0 calc(var(--board-pad) + 4px);
+  width: 100%;
+  padding: 0 var(--space-xs);
 }
 
 .hint {
-  color: var(--stone);
+  color: var(--ink-faint);
   font-size: var(--text-micro);
 }
 
 .boardArea {
-  flex: 1;
-  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* Torn strip along the bottom of the sheet, where the controls sit. */
 .controls {
   display: flex;
   justify-content: center;
   gap: var(--space-xs);
-  padding: 0 var(--board-pad);
+  width: 100%;
+  padding: 0 var(--space-xs);
 }
 
-/* button-secondary — outline pills. Yellow is reserved for the wordmark and
-   tags, and the black pill is saved for the one primary action on the screen. */
 .control {
   flex: 1 1 0;
-  max-width: 132px;
+  max-width: 128px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: 1px solid var(--hairline-strong);
+  gap: 6px;
+  border-radius: 10px 13px 11px 14px / 13px 10px 14px 11px;
+  background: var(--paper-shade);
   color: var(--ink);
-  font-size: var(--text-sm);
-  font-weight: 500;
+  font-family: var(--font-hand);
+  font-size: 19px;
   transition:
     transform 140ms var(--ease),
     background 140ms var(--ease);
 }
 
 .control:active:not(:disabled) {
-  transform: scale(0.97);
-  background: var(--surface);
+  transform: translateY(1px) scale(0.98);
+  background: var(--paper-edge);
 }
 
 .control:disabled {
-  border-color: var(--hairline);
-  color: var(--muted);
+  color: var(--ink-faint);
+  opacity: 0.6;
   cursor: default;
 }
 
@@ -111,47 +152,41 @@
   line-height: 1;
 }
 
-/* The solve message replaces the rule strip rather than covering the board —
-   the finished grid is the reward, so nothing sits on top of it. */
 .done {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xxs);
-  padding: 0 var(--board-pad);
+  gap: 2px;
+  width: 100%;
   animation: rise 420ms var(--ease) both;
 }
 
 .doneTitle {
-  font-size: var(--text-h4);
-  font-weight: 500;
-  letter-spacing: -0.2px;
+  font-size: 30px;
+  color: var(--ink);
 }
 
 .doneMeta {
-  color: var(--slate);
+  color: var(--ink-soft);
   font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   margin: 0;
 }
 
-/* button-primary — the black pill, the one dominant action. */
+/* The one strong action on the screen, drawn as a taped-on label. */
 .next {
   margin-top: var(--space-xs);
-  padding: 12px 24px;
-  border-radius: var(--radius-full);
+  padding: 10px 22px;
+  border-radius: 12px 15px 13px 16px / 15px 12px 16px 13px;
   background: var(--ink);
-  color: var(--on-primary);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  transition:
-    transform 140ms var(--ease),
-    background 140ms var(--ease);
+  color: var(--paper);
+  font-family: var(--font-hand);
+  font-size: 20px;
+  transition: transform 140ms var(--ease);
 }
 
 .next:active {
-  transform: scale(0.97);
-  background: var(--charcoal);
+  transform: translateY(1px) scale(0.98);
 }
 
 @keyframes rise {
@@ -163,7 +198,7 @@
 
 @media (max-height: 700px) {
   .screen {
-    --chrome: 244px;
+    --chrome: 250px;
     gap: var(--space-sm);
   }
 }

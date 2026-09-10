@@ -70,20 +70,21 @@ export function Home({
       </Link>
 
       <section className={styles.card}>
+        <span className={styles.pin} aria-hidden="true" />
         <div className={styles.cardHead}>
-          <h2 className={styles.cardTitle}>Emoji Star Battle</h2>
+          <h2 className={styles.cardTitle}>Star Battle</h2>
           <span className={styles.eyebrow}>Pick a size</span>
         </div>
         <p className={styles.blurb}>
-          One emoji in every row, every column and every colour — and no two may touch, not even at
-          the corners.
+          One doodle in every row, every column and every colour — and no two may touch, not even
+          at the corners.
         </p>
         <ul className={styles.how}>
           <li>
             <b>Tap</b> a square to rule it out
           </li>
           <li>
-            <b>Double tap</b> to place the emoji
+            <b>Double tap</b> to place the doodle
           </li>
           <li>Three wrong guesses ends the round</li>
         </ul>
@@ -132,7 +133,7 @@ export function Home({
         </div>
       )}
 
-      {notice && <p className={styles.blurb}>{notice}</p>}
+      {notice && <p className={styles.notice}>{notice}</p>}
     </main>
   )
 }

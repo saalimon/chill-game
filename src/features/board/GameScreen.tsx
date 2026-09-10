@@ -6,6 +6,7 @@ import { formatDuration } from '@/lib/format'
 import { useGameSession } from '@/features/session/useGameSession'
 import { replayLog, type Move } from '@/features/session/session'
 import { Board } from './Board'
+import { DoodleSprite } from './doodles/Doodle'
 import { Lives } from './Lives'
 import { RuleStrip } from './RuleStrip'
 import { Timer } from './Timer'
@@ -47,60 +48,63 @@ export function GameScreen({
 
   return (
     <div className={styles.screen}>
-      <header className={styles.bar}>
-        <Link to="/" className={styles.back}>
-          ← Games
-        </Link>
-        <h1 className={styles.title}>{label}</h1>
-        <span className={styles.timer} aria-label="time on this puzzle">
-          <Timer read={game.readClock} frozenMs={solved ? (session.solvedAt ?? 0) : null} />
-        </span>
-      </header>
+      <DoodleSprite />
+      <div className={styles.sheet}>
+        <span className={styles.pin} aria-hidden="true" />
+        <header className={styles.bar}>
+          <Link to="/" className={styles.back}>
+            ← Games
+          </Link>
+          <h1 className={styles.title}>{label}</h1>
+          <span className={styles.timer} aria-label="time on this puzzle">
+            <Timer read={game.readClock} frozenMs={solved ? (session.solvedAt ?? 0) : null} />
+          </span>
+        </header>
 
-      {solved ? (
-        <div className={styles.done}>
-          <h2 className={styles.doneTitle}>Solved</h2>
-          <p className={styles.doneMeta}>
-            {formatDuration(session.solvedAt ?? 0)}
-            {session.hintsUsed > 0 &&
-              ` · ${session.hintsUsed} hint${session.hintsUsed > 1 ? 's' : ''}`}
-            {` · ${difficultyOf(puzzle.size, puzzle.nodes)}`}
-          </p>
-          {onNext && (
-            <button type="button" className={styles.next} onClick={onNext}>
-              {nextLabel}
-            </button>
-          )}
-        </div>
-      ) : lost ? (
-        <div className={styles.done}>
-          <h2 className={styles.doneTitle}>Out of guesses</h2>
-          <p className={styles.doneMeta}>Three wrong squares. The board is still here to retry.</p>
-          <button type="button" className={styles.next} onClick={game.restart}>
-            Try this board again
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className={styles.status}>
-            <Lives left={session.lives} />
-            <span className={styles.hint}>Tap to rule out · double tap to place</span>
+        {solved ? (
+          <div className={styles.done}>
+            <h2 className={styles.doneTitle}>Solved</h2>
+            <p className={styles.doneMeta}>
+              {formatDuration(session.solvedAt ?? 0)}
+              {session.hintsUsed > 0 &&
+                ` · ${session.hintsUsed} hint${session.hintsUsed > 1 ? 's' : ''}`}
+              {` · ${difficultyOf(puzzle.size, puzzle.nodes)}`}
+            </p>
+            {onNext && (
+              <button type="button" className={styles.next} onClick={onNext}>
+                {nextLabel}
+              </button>
+            )}
           </div>
-          <RuleStrip />
-        </>
-      )}
+        ) : lost ? (
+          <div className={styles.done}>
+            <h2 className={styles.doneTitle}>Out of guesses</h2>
+            <p className={styles.doneMeta}>Three wrong squares. The board is still here to retry.</p>
+            <button type="button" className={styles.next} onClick={game.restart}>
+              Try this board again
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className={styles.status}>
+              <Lives left={session.lives} />
+              <span className={styles.hint}>Tap to rule out · double tap to place</span>
+            </div>
+            <RuleStrip />
+          </>
+        )}
 
-      <div className={styles.boardArea}>
-        <Board
-          puzzle={puzzle}
-          grid={session.grid}
-          solved={solved}
-          origin={game.origin}
-          onTapCell={game.tapCell}
-        />
-      </div>
+        <div className={styles.boardArea}>
+          <Board
+            puzzle={puzzle}
+            grid={session.grid}
+            solved={solved}
+            origin={game.origin}
+            onTapCell={game.tapCell}
+          />
+        </div>
 
-      <div className={styles.controls}>
+        <div className={styles.controls}>
         <button
           type="button"
           className={styles.control}
@@ -123,6 +127,7 @@ export function GameScreen({
           <span className={styles.glyph}>⟲</span>
           Restart
         </button>
+        </div>
       </div>
     </div>
   )

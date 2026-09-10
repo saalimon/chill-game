@@ -1,119 +1,115 @@
+/*
+ * The board is a sheet of paper. All of its colour and line is drawn by the SVG
+ * in `BoardInk`; the cells above it are transparent hit targets that carry only
+ * what the player puts there.
+ */
 .board {
+  position: relative;
   --side: min(
-    calc(100vw - 2 * var(--board-pad, 12px)),
-    calc(100dvh - var(--chrome, 236px)),
-    540px
+    calc(100vw - 2 * var(--board-pad, 14px) - 2 * var(--space-sm)),
+    calc(100dvh - var(--chrome, 276px)),
+    460px
   );
-  --cell: calc(var(--side) / var(--size));
-
   width: var(--side);
   aspect-ratio: 1;
-  display: grid;
-  /* Rows must be sized explicitly. Left implicit they size to their content, so
-     the first emoji dropped into a row made that row taller than the rest and
-     the squares stopped being square. */
-  grid-template-columns: repeat(var(--size), 1fr);
-  grid-template-rows: repeat(var(--size), 1fr);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--region-border);
-  border: 1.5px solid var(--region-border);
-  box-shadow: var(--shadow-2);
-  /* Rapid tapping must never select, zoom, or pop the iOS callout. */
+  /* Room for the ink to overshoot the lattice without being clipped. */
+  padding: 2px;
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
 
+.cells {
+  position: relative;
+  display: grid;
+  /* Rows sized explicitly: left implicit they grow to fit their content, and a
+     square holding a doodle would stop being square. */
+  grid-template-columns: repeat(var(--size), 1fr);
+  grid-template-rows: repeat(var(--size), 1fr);
+  width: 100%;
+  height: 100%;
+}
+
 .cell {
   position: relative;
   display: grid;
   place-items: center;
-  /* Grid items refuse to shrink below their content without this, which would
-     also push the squares out of shape. */
   min-width: 0;
   min-height: 0;
-  background: var(--fill);
-  font-size: calc(var(--cell) * 0.56);
-  line-height: 1;
-  /* Region boundaries are drawn in ink; cells inside one region get a hairline
-     so the grid stays countable. Only top and left edges are drawn, so a shared
-     edge is never doubled. */
-  border-top: var(--edge-top) solid var(--edge-top-color);
-  border-left: var(--edge-left) solid var(--edge-left-color);
-  transition: filter 140ms var(--ease);
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  transition: background 140ms var(--ease);
 }
 
 .cell:active {
-  filter: brightness(0.96);
+  background: rgb(0 0 0 / 0.05);
 }
 
-.emoji {
-  animation: settle 200ms var(--ease);
+.doodle {
+  width: 62%;
+  height: 62%;
+  color: var(--token-ink);
+  animation: settle 220ms var(--ease);
 }
 
 .mark {
-  font-size: calc(var(--cell) * 0.34);
+  font-size: calc(var(--side) / var(--size) * 0.34);
   line-height: 1;
-  color: var(--stone);
-  font-weight: 500;
+  color: var(--ink-faint);
   animation: settle 140ms var(--ease);
 }
 
 /* A guess that cost a life. It stays on the board as a record of the mistake. */
 .wrong {
-  font-size: calc(var(--cell) * 0.42);
+  font-size: calc(var(--side) / var(--size) * 0.44);
   line-height: 1;
-  color: #d92d20;
+  color: var(--pen-red);
   font-weight: 600;
-  animation: shake 260ms var(--ease);
+  animation: scrawl 280ms var(--ease);
 }
 
-@keyframes shake {
-  0% {
-    transform: scale(0.6);
+.solved .doodle {
+  animation: bloom 640ms var(--ease) backwards;
+  animation-delay: calc(var(--ripple, 0) * 55ms);
+}
+
+@keyframes settle {
+  from {
+    transform: scale(0.5) rotate(-8deg);
     opacity: 0;
   }
-  40% {
-    transform: scale(1.15) rotate(-6deg);
+  70% {
+    transform: scale(1.08) rotate(2deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
     opacity: 1;
   }
-  70% {
-    transform: rotate(4deg);
+}
+
+@keyframes scrawl {
+  0% {
+    transform: scale(0.55) rotate(-14deg);
+    opacity: 0;
+  }
+  45% {
+    transform: scale(1.18) rotate(7deg);
+    opacity: 1;
   }
   100% {
     transform: none;
   }
 }
 
-.solved .emoji {
-  animation: bloom 620ms var(--ease) backwards;
-  animation-delay: calc(var(--ripple, 0) * 55ms);
-}
-
-@keyframes settle {
-  from {
-    transform: scale(0.55);
-    opacity: 0;
-  }
-  70% {
-    transform: scale(1.06);
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* The solve moment: emojis pulse outward from the last one placed, like a
-   ripple crossing the board. */
+/* The solve moment: doodles pulse outward from the last one placed. */
 @keyframes bloom {
   0%,
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0);
   }
   40% {
-    transform: scale(1.28);
+    transform: scale(1.3) rotate(6deg);
   }
 }

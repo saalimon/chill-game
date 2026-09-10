@@ -1,0 +1,16 @@
+.ink {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* The buttons underneath own every tap. */
+  pointer-events: none;
+}
+
+.boundary {
+  stroke: var(--ink);
+}
+
+.rule {
+  stroke: var(--ink-rule);
+}

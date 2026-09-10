@@ -1,84 +1,64 @@
 /*
- * Miro design system (see DESIGN.md).
+ * Paper on a desk.
  *
- * Stark white canvas, ink text, flat surfaces with hairline borders, black pill
- * CTAs. Canary yellow is the wordmark and tag colour only — per the spec it is
- * never a primary action.
+ * A sage ground, a sheet of cream paper pinned to it, and marks drawn in a few
+ * coloured pens. Everything the board shows is ink on that paper, so the palette
+ * is built from three things: the ground it sits on, the paper itself, and the
+ * pens used on it.
  *
- * The puzzle board reuses the pastel feature tints, which are the same palette
- * as the product's sticky notes: nine of them fill the regions, separated by
- * ink hairlines, so a board reads as a Miro board.
+ * The nine region washes sit deliberately close to the paper. The drawn line is
+ * what separates one region from the next — which keeps the board readable
+ * without relying on colour, and keeps a nine-colour grid from turning loud.
  */
 :root {
   color-scheme: light;
 
-  /* Brand & accent */
-  --brand-yellow: #ffd02f;
-  --brand-yellow-deep: #fcb900;
-  --yellow-light: #fff4c4;
-  --yellow-dark: #746019;
-  --brand-blue: #4262ff;
-  --blue-pressed: #2a41b6;
-  --brand-coral: #ff9999;
-  --coral-dark: #600000;
-  --brand-teal: #0fbcb0;
-  --moss-dark: #187574;
-  --success-accent: #00b473;
-  --brand-red: #fbd4d4;
+  --ground: #929c6f;
+  --ground-deep: #838c62;
+  --ground-shadow: rgb(52 58 34 / 0.28);
 
-  /* Surface */
-  --canvas: #ffffff;
-  --surface: #f7f8fa;
-  --surface-soft: #fafbfc;
-  --hairline: #e0e2e8;
-  --hairline-soft: #eef0f3;
-  --hairline-strong: #c7cad5;
+  --paper: #f7f2e6;
+  --paper-edge: #ebe3d1;
+  --paper-shade: #e4dcc7;
 
-  /* Text */
-  --ink-deep: #050038;
-  --ink: #1c1c1e;
-  --charcoal: #2c2c34;
-  --slate: #555a6a;
-  --steel: #6b6f7e;
-  --stone: #8e91a0;
-  --muted: #a5a8b5;
-  --on-primary: #ffffff;
+  --ink: #2f3d4a;
+  --ink-soft: #55677a;
+  --ink-faint: #8a94a0;
+  --ink-rule: rgb(47 61 74 / 0.22);
 
-  /* Region fills — the sticky-note palette, extended to nine.
-     Ink hairlines carry the structure, so the board stays readable without
-     relying on colour alone. */
-  --region-0: #fff4c4;
-  --region-1: #ffc6c6;
-  --region-2: #c3faf5;
-  --region-3: #fde0f0;
-  --region-4: #ffdcb8;
-  --region-5: #e0dbff;
-  --region-6: #d6f5e3;
-  --region-7: #d3e3ff;
-  --region-8: #eaf0c9;
+  --pen-pink: #e0466b;
+  --pen-blue: #7d9ac2;
+  --pen-yellow: #d9b93f;
+  --pen-red: #d0442f;
+  --pen-ink: #2f3d4a;
 
-  --region-border: var(--ink);
-  --region-hairline: rgb(28 28 30 / 0.14);
+  --kraft: #d8c3a2;
 
-  /* Roobert PRO is licensed to Miro and not distributable, so the spec's own
-     fallback chain leads — Hanken Grotesk stands in for its geometric,
-     slightly rounded character. */
-  --font-body: 'Hanken Grotesk Variable', 'Noto Sans', -apple-system,
-    BlinkMacSystemFont, sans-serif;
+  /* Region washes — wheat, blush, sage mist, periwinkle, sand, celadon, mauve,
+     sky, olive cream. */
+  --region-0: #f2e7cf;
+  --region-1: #f3ddd8;
+  --region-2: #dbe6e0;
+  --region-3: #e2e3ef;
+  --region-4: #f0e2d0;
+  --region-5: #dfe8d6;
+  --region-6: #ecdfe8;
+  --region-7: #d9e4ea;
+  --region-8: #eae7d3;
 
-  /* Type scale (DESIGN.md typography) */
-  --text-h2: 36px;
-  --text-h3: 28px;
-  --text-h4: 22px;
-  --text-h5: 18px;
-  --text-body: 16px;
+  --font-hand: 'Caveat Variable', 'Bradley Hand', cursive;
+  --font-body: 'Hanken Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --text-h1: 42px;
+  --text-h2: 30px;
+  --text-h3: 22px;
+  --text-h4: 18px;
+  --text-body: 15px;
   --text-sm: 14px;
   --text-caption: 13px;
   --text-micro: 12px;
   --text-micro-up: 11px;
-  --text-stat: 40px;
 
-  /* Spacing */
   --space-xxs: 4px;
   --space-xs: 8px;
   --space-sm: 12px;
@@ -87,18 +67,13 @@
   --space-xl: 24px;
   --space-xxl: 32px;
 
-  /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-xxl: 20px;
-  --radius-xxxl: 28px;
+  --radius-sm: 5px;
+  --radius-md: 9px;
+  --radius-lg: 13px;
   --radius-full: 9999px;
 
-  /* Elevation — the system runs flat, with two strategic levels. */
-  --shadow-1: rgb(5 0 56 / 0.04) 0 1px 2px 0;
-  --shadow-2: rgb(5 0 56 / 0.06) 0 4px 12px 0;
+  --shadow-sheet: 0 10px 22px -12px rgb(52 58 34 / 0.5), 0 2px 5px rgb(52 58 34 / 0.16);
+  --shadow-card: 0 5px 14px -9px rgb(52 58 34 / 0.5);
 
   --ease: cubic-bezier(0.32, 0.72, 0.3, 1);
 
@@ -107,45 +82,46 @@
 }
 
 /*
- * Dark mode is not part of the Miro spec, which is a white-canvas marketing
- * system. It is kept here because this is a phone game people play at night:
- * the same tokens, translated — ink and canvas swap roles, the sticky-note
- * hues drop to the same relationships at low lightness.
+ * Lamplight, rather than a conventional dark mode.
+ *
+ * Inverting to pale ink on a dark sheet would throw away the paper this whole
+ * design rests on. Instead the desk goes dark, the paper dims to something aged,
+ * and the ink stays ink.
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --canvas: #17171a;
-    --surface: #1f1f23;
-    --surface-soft: #1b1b1f;
-    --hairline: #34343c;
-    --hairline-soft: #2a2a31;
-    --hairline-strong: #4a4a55;
+    --ground: #23261d;
+    --ground-deep: #1b1e16;
+    --ground-shadow: rgb(0 0 0 / 0.5);
 
-    --ink-deep: #f4f4f7;
-    --ink: #f0f0f3;
-    --charcoal: #dcdce2;
-    --slate: #a8adba;
-    --steel: #8e93a1;
-    --stone: #757a88;
-    --muted: #5f6470;
-    --on-primary: #17171a;
+    --paper: #cdc2a6;
+    --paper-edge: #bdb192;
+    --paper-shade: #b3a686;
 
-    --region-0: #4a4327;
-    --region-1: #4f3131;
-    --region-2: #234a47;
-    --region-3: #4a3341;
-    --region-4: #4d3a26;
-    --region-5: #383357;
-    --region-6: #27473a;
-    --region-7: #2c3a5a;
-    --region-8: #3f4529;
+    --ink: #2a3340;
+    --ink-soft: #4b5768;
+    --ink-faint: #6d7788;
+    --ink-rule: rgb(42 51 64 / 0.26);
 
-    --region-border: #0c0c0e;
-    --region-hairline: rgb(255 255 255 / 0.09);
+    --pen-pink: #c23a5c;
+    --pen-blue: #5c7ba6;
+    --pen-yellow: #b08f22;
+    --pen-red: #b23522;
+    --pen-ink: #2a3340;
 
-    --shadow-1: rgb(0 0 0 / 0.3) 0 1px 2px 0;
-    --shadow-2: rgb(0 0 0 / 0.4) 0 4px 12px 0;
+    --region-0: #c8bc97;
+    --region-1: #cbb2a9;
+    --region-2: #b2bfb1;
+    --region-3: #b8bcc9;
+    --region-4: #c8b69b;
+    --region-5: #b6c2a6;
+    --region-6: #c3b2bd;
+    --region-7: #adbcc4;
+    --region-8: #c1bc9c;
+
+    --shadow-sheet: 0 12px 26px -12px rgb(0 0 0 / 0.7), 0 2px 6px rgb(0 0 0 / 0.4);
+    --shadow-card: 0 6px 16px -9px rgb(0 0 0 / 0.7);
   }
 }

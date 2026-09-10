@@ -1,59 +1,68 @@
 .page {
-  max-width: 560px;
+  max-width: 520px;
   margin: 0 auto;
-  padding: calc(var(--safe-top) + var(--space-xxl)) var(--space-md)
+  padding: calc(var(--safe-top) + var(--space-xl)) var(--space-md)
     calc(var(--safe-bottom) + var(--space-xxl));
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-  background: var(--canvas);
 }
 
 .masthead {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xxs);
+  padding: 0 var(--space-xs);
 }
 
-/*
- * The wordmark is the one place canary yellow appears, exactly as the system
- * reserves it — a small mark on a stark white canvas, not a CTA.
- */
 .wordmark {
-  font-size: var(--text-h2);
-  font-weight: 500;
-  letter-spacing: -0.5px;
-  color: var(--ink);
-}
-
-.wordmark::after {
-  content: '';
-  display: block;
-  width: 34px;
-  height: 6px;
-  margin-top: 6px;
-  border-radius: var(--radius-full);
-  background: var(--brand-yellow);
+  font-family: var(--font-hand);
+  font-size: var(--text-h1);
+  line-height: 1;
+  color: var(--paper);
+  /* Written straight onto the desk, so it needs its own shadow to sit there. */
+  text-shadow: 0 2px 6px var(--ground-shadow);
 }
 
 .tagline {
-  color: var(--slate);
+  color: var(--paper);
+  opacity: 0.78;
   font-size: var(--text-sm);
-  margin: var(--space-xs) 0 0;
+  margin: var(--space-xxs) 0 0;
 }
 
-/* card-base */
+/* Everything below is paper pinned to the desk. */
 .card {
-  background: var(--canvas);
-  border: 1px solid var(--hairline-soft);
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
+  position: relative;
+  background: var(--paper);
+  border-radius: 6px 9px 7px 10px / 9px 6px 10px 7px;
+  padding: var(--space-lg) var(--space-md) var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  box-shadow: var(--shadow-1);
+  gap: var(--space-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  translate: -50% 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--pen-pink);
+  box-shadow:
+    inset -2px -2px 0 rgb(0 0 0 / 0.2),
+    1px 3px 4px var(--ground-shadow);
+}
+
+.pin::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 4.5px;
+  height: 4.5px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.6);
 }
 
 .cardHead {
@@ -64,39 +73,39 @@
 }
 
 .cardTitle {
-  font-size: var(--text-h4);
-  font-weight: 500;
+  font-family: var(--font-hand);
+  font-size: var(--text-h3);
+  line-height: 1.1;
 }
 
-/* micro-uppercase */
 .eyebrow {
-  color: var(--stone);
+  color: var(--ink-faint);
   font-size: var(--text-micro-up);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .blurb {
-  color: var(--slate);
-  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
   margin: 0;
 }
 
+/* Handwritten notes in the margin. */
 .how {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  color: var(--slate);
-  font-size: var(--text-caption);
+  gap: 2px;
+  font-family: var(--font-hand);
+  font-size: 18px;
+  color: var(--ink);
 }
 
 .how b {
-  font-weight: 600;
-  color: var(--ink);
+  font-weight: 700;
 }
 
 .sizes {
@@ -105,58 +114,64 @@
   gap: 6px;
 }
 
+/* Torn paper chips, each nudged a little out of line. */
 .size {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: var(--space-sm) 0;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  border: 1px solid var(--hairline);
+  gap: 0;
+  padding: var(--space-xs) 0;
+  border-radius: 8px 11px 9px 12px / 11px 8px 12px 9px;
+  background: var(--paper-shade);
   color: var(--ink);
   text-decoration: none;
   transition:
     transform 140ms var(--ease),
-    border-color 140ms var(--ease);
+    background 140ms var(--ease);
+}
+
+.size:nth-child(odd) {
+  rotate: -1.1deg;
+}
+
+.size:nth-child(even) {
+  rotate: 0.9deg;
 }
 
 .size:active {
-  transform: scale(0.96);
-  border-color: var(--hairline-strong);
+  transform: scale(0.95);
+  background: var(--paper-edge);
 }
 
 .sizeNum {
-  font-size: var(--text-h5);
-  font-weight: 500;
+  font-family: var(--font-hand);
+  font-size: 25px;
   line-height: 1.1;
 }
 
 .sizeTier {
   font-size: var(--text-micro-up);
-  font-weight: 500;
-  color: var(--stone);
+  color: var(--ink-faint);
 }
 
-/*
- * card-feature-yellow. The daily is the one feature card on the screen, so it
- * takes the sticky-note treatment the system uses for feature panels.
- */
+/* The daily is a kraft sticker, not a sheet of the same paper. */
 .daily {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  padding: var(--space-lg) var(--space-xl);
-  border-radius: var(--radius-xxxl);
-  background: var(--yellow-light);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: 7px 10px 8px 11px / 10px 7px 11px 8px;
+  background: var(--kraft);
   text-decoration: none;
-  transition: transform 140ms var(--ease);
+  box-shadow: var(--shadow-card);
+  rotate: -0.6deg;
 
-  /* A sticky note is a light surface in either theme, so its text is always
-     dark ink — never the theme's foreground, which would go white on yellow. */
-  --note-ink: #1c1c1e;
-  --note-ink-dim: #746019;
+  /* A kraft label is a light surface whichever way the desk is lit, so its text
+     is always dark ink rather than the theme's foreground. */
+  --note-ink: #3a2f22;
+  --note-ink-dim: #6b5842;
   color: var(--note-ink);
 }
 
@@ -174,7 +189,7 @@
 }
 
 .dailyGlyph {
-  font-size: 26px;
+  font-size: 24px;
 }
 
 .dailyMeta {
@@ -190,27 +205,24 @@
 }
 
 .stat {
-  background: var(--surface-soft);
-  border: 1px solid var(--hairline-soft);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md) var(--space-xs);
+  background: var(--paper);
+  border-radius: 7px 10px 8px 11px / 10px 7px 11px 8px;
+  padding: var(--space-sm) var(--space-xs);
   text-align: center;
+  box-shadow: var(--shadow-card);
 }
 
-/* stat-display, scaled down for a phone. */
 .statValue {
-  font-size: var(--text-stat);
-  font-weight: 500;
+  font-family: var(--font-hand);
+  font-size: 30px;
   line-height: 1.1;
-  letter-spacing: -1px;
   font-variant-numeric: tabular-nums;
 }
 
 .statLabel {
-  color: var(--stone);
+  color: var(--ink-faint);
   font-size: var(--text-micro-up);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -219,26 +231,34 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  color: var(--slate);
+  color: var(--paper);
+  opacity: 0.85;
   font-size: var(--text-caption);
+  padding: 0 var(--space-xs);
 }
 
-/* button-secondary */
 .signIn {
-  padding: 10px 20px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--hairline-strong);
-  background: transparent;
-  color: var(--ink);
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.45);
+  background: rgb(255 255 255 / 0.12);
+  color: var(--paper);
   font-size: var(--text-sm);
-  font-weight: 500;
   white-space: nowrap;
 }
 
 .signIn:active {
-  background: var(--surface);
+  background: rgb(255 255 255 / 0.22);
 }
 
 .offline {
-  color: var(--brand-yellow-deep);
+  color: var(--pen-yellow);
+}
+
+.notice {
+  color: var(--paper);
+  opacity: 0.9;
+  font-size: var(--text-caption);
+  padding: 0 var(--space-xs);
+  margin: 0;
 }

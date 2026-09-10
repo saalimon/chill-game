@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { generate, SIZES } from './generate'
+import { TOKEN_IDS, TOKEN_INKS } from './tokens'
 import { solve } from './solve'
 import { touches } from './rules'
 import type { Cell, Regions } from './types'
@@ -45,11 +46,13 @@ describe('generate', () => {
     const p = generate(99, 6)
     expect(p.seed).toBe(99)
     expect(p.size).toBe(6)
-    expect(p.genVersion).toBe(1)
+    expect(p.genVersion).toBe(2)
   })
 
-  it('picks an emoji', () => {
-    expect(generate(99, 6).emoji).toMatch(/\S/)
+  it('picks a doodle and an ink to draw it with', () => {
+    const { token } = generate(99, 6)
+    expect(TOKEN_IDS).toContain(token.id)
+    expect(TOKEN_INKS).toContain(token.ink)
   })
 
   it('rejects sizes outside the supported ladder', () => {

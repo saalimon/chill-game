@@ -14,16 +14,18 @@ body {
 
 body {
   margin: 0;
-  background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--text-body);
-  font-weight: 400;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 
-  /* A tap-heavy board on a phone: no rubber-band scroll, no selection from
-     rapid tapping, no iOS callout on long press. */
+  /* The desk the paper sits on. The grain keeps a large flat colour from
+     looking like a screen — a tiny tiled SVG rather than a live filter, which
+     would cost real battery on a phone. */
+  background-color: var(--ground);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.14'/%3E%3C/svg%3E");
+
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -38,19 +40,18 @@ button {
   touch-action: manipulation;
 }
 
-/* The system uses one family at a single weight scale: 400 body, 500 headings
-   and medium emphasis, 600 badges and uppercase micro labels. No 700. */
 h1,
 h2,
 h3 {
-  font-weight: 500;
-  line-height: 1.2;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  line-height: 1.1;
   margin: 0;
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand-blue);
-  outline-offset: 2px;
+  outline: 2px solid var(--pen-blue);
+  outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
 

@@ -1,4 +1,4 @@
-import { pickEmoji } from './emoji'
+import { pickToken } from './tokens'
 import { mulberry32, randInt, shuffled, type Rng } from './rng'
 import { countSolutions, solve } from './solve'
 import { GEN_VERSION, type Cell, type Puzzle, type Regions } from './types'
@@ -7,10 +7,26 @@ import { GEN_VERSION, type Cell, type Puzzle, type Regions } from './types'
 export const SIZES = [5, 6, 7, 8, 9] as const
 export type Size = (typeof SIZES)[number]
 
-/** Boundary nudges tried on one layout before starting over with a fresh one. */
-const REPAIRS_PER_LAYOUT = 300
+/**
+ * Frontier cells sampled per growth step, with the hungriest region winning.
+ *
+ * Picking uniformly at random lets one region run away with the board — measured
+ * over 200 boards, the largest region averaged 15 of 49 cells at 7x7 against an
+ * ideal of 7, and could reach half the grid while others stayed a single cell.
+ * Sampling a few candidates and feeding whichever region is smallest evens them
+ * out while keeping the shapes irregular.
+ */
+const BALANCE_SAMPLES = 6
+
+/**
+ * Boundary nudges tried on one layout before starting over with a fresh one.
+ *
+ * A 7x7 board needs 17 at the median and a 9x9 needs 38, so this has room to
+ * spare without letting a stubborn layout run forever.
+ */
+const REPAIRS_PER_LAYOUT = 120
 /** Fresh layouts tried before giving up on a seed entirely. */
-const MAX_LAYOUTS = 200
+const MAX_LAYOUTS = 400
 
 const ORTHOGONAL = [
   [1, 0],
@@ -68,16 +84,31 @@ function growRegions(size: number, solution: Cell[], rng: Rng): Regions {
     }
   }
 
+  const counts = new Array<number>(size).fill(1)
   solution.forEach((cell, region) => claim(cell.r, cell.c, region))
 
   let remaining = size * size - size
   while (remaining > 0 && frontier.length > 0) {
-    const i = randInt(rng, frontier.length)
-    const next = frontier[i]
-    frontier[i] = frontier[frontier.length - 1]
+    let chosen = -1
+    for (let sample = 0; sample < BALANCE_SAMPLES && frontier.length > 0; sample++) {
+      const i = randInt(rng, frontier.length)
+      const candidate = frontier[i]
+      if (regions[candidate.r][candidate.c] !== -1) {
+        // Already claimed by another region: drop it and carry on.
+        frontier[i] = frontier[frontier.length - 1]
+        frontier.pop()
+        if (chosen >= frontier.length) chosen = -1
+        continue
+      }
+      if (chosen === -1 || counts[candidate.region] < counts[frontier[chosen].region]) chosen = i
+    }
+    if (chosen === -1) continue
+
+    const next = frontier[chosen]
+    frontier[chosen] = frontier[frontier.length - 1]
     frontier.pop()
-    if (regions[next.r][next.c] !== -1) continue
     claim(next.r, next.c, next.region)
+    counts[next.region]++
     remaining--
   }
 
@@ -176,7 +207,7 @@ export function generate(seed: number, size: number): Puzzle {
           genVersion: GEN_VERSION,
           regions,
           solution,
-          emoji: pickEmoji(rng),
+          token: pickToken(rng),
           nodes,
         }
       }

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { generate } from '@/game/starbattle/generate'
 import { GameScreen } from './GameScreen'
+import { glyphLabel } from './doodles/Doodle'
 
 const puzzle = generate(2026, 5)
 
@@ -44,7 +45,7 @@ describe('tapping a square', () => {
     const user = setup()
     renderBoard()
     await user.dblClick(cellAt(0, 0))
-    expect(cellAt(0, 0)).toHaveAccessibleName(new RegExp(puzzle.emoji))
+    expect(cellAt(0, 0)).toHaveAccessibleName(new RegExp(glyphLabel(puzzle.token.id)))
   })
 
   it('leaves a double tap as one step, so a single undo clears it', async () => {
@@ -55,7 +56,7 @@ describe('tapping a square', () => {
     expect(cellAt(0, 0)).toHaveAccessibleName(/empty/)
   })
 
-  it('takes the emoji away when the square is double tapped again', async () => {
+  it('takes the doodle away when the square is double tapped again', async () => {
     const user = setup()
     renderBoard()
     await user.dblClick(cellAt(0, 0))
@@ -87,7 +88,7 @@ describe('the controls', () => {
     renderBoard()
     await user.click(screen.getByRole('button', { name: /hint/i }))
     const placed = puzzle.solution.filter((cell) =>
-      cellAt(cell.r, cell.c).getAttribute('aria-label')?.includes(puzzle.emoji),
+      cellAt(cell.r, cell.c).getAttribute('aria-label')?.includes(glyphLabel(puzzle.token.id)),
     )
     expect(placed).toHaveLength(1)
   })
