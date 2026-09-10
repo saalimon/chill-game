@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath, URL } from 'node:url'
 
-// Served from https://<user>.github.io/chilled-game/
+// Served from https://<user>.github.io/chill-game/
 export default defineConfig({
-  base: '/chilled-game/',
+  base: '/chill-game/',
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
@@ -33,8 +33,8 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/chilled-game/',
-        scope: '/chilled-game/',
+        start_url: '/chill-game/',
+        scope: '/chill-game/',
         icons: [
           { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },

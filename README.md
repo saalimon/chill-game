@@ -3,7 +3,7 @@
 A small collection of calm puzzle games, built as an installable PWA. It ships
 with one game: **Emoji Star Battle**.
 
-Live at https://deduq.dev/chilled-game/
+Live at https://deduq.dev/chill-game/
 
 ## The game
 
@@ -28,7 +28,7 @@ same board, with many valid answers and nothing to deduce.
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173/chilled-game/
+npm run dev        # http://localhost:5173/chill-game/
 npm test           # the full suite
 npm run typecheck
 npm run build
