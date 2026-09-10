@@ -3,7 +3,7 @@
 A small collection of calm puzzle games, built as an installable PWA. It ships
 with one game: **Emoji Star Battle**.
 
-Live at https://saalimon.github.io/chilled-game/
+Live at https://deduq.dev/chilled-game/
 
 ## The game
 
@@ -89,11 +89,15 @@ builds and publishes to GitHub Pages.
 
 One-time setup in the repository:
 
-1. **Settings → Pages → Source: GitHub Actions**
+1. **Settings → Pages → Source: GitHub Actions**, and tick **Enforce HTTPS** —
+   the service worker only registers over HTTPS, so installing and offline play
+   depend on it
 2. **Settings → Secrets and variables → Actions** — add the `VITE_FIREBASE_*`
    values from `.env.example` (optional; without them the app is device-only)
-3. In the Firebase console, add `saalimon.github.io` to
-   **Authentication → Settings → Authorized domains**
+3. In the Firebase console, add `deduq.dev` to **Authentication → Settings →
+   Authorized domains** (the repo is published through the account's custom
+   domain, so `saalimon.github.io` redirects there and is not the origin the
+   browser sees)
 4. Publish `database.rules.json` to the Realtime Database
 
 The Firebase web config is public by design — the app is protected by the
