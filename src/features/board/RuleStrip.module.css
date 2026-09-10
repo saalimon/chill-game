@@ -1,0 +1,34 @@
+.strip {
+  display: flex;
+  gap: var(--space-xxs);
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 var(--space-xs);
+}
+
+/* pill-tab, at the system's caption size. */
+.rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  color: var(--steel);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    color 200ms var(--ease),
+    border-color 200ms var(--ease),
+    background 200ms var(--ease);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.45;
+}

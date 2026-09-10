@@ -1,0 +1,21 @@
+.lives {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--brand-coral);
+  transition:
+    background 220ms var(--ease),
+    transform 220ms var(--ease);
+}
+
+.spent {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--hairline-strong);
+  transform: scale(0.8);
+}

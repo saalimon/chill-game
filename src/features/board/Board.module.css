@@ -1,0 +1,119 @@
+.board {
+  --side: min(
+    calc(100vw - 2 * var(--board-pad, 12px)),
+    calc(100dvh - var(--chrome, 236px)),
+    540px
+  );
+  --cell: calc(var(--side) / var(--size));
+
+  width: var(--side);
+  aspect-ratio: 1;
+  display: grid;
+  /* Rows must be sized explicitly. Left implicit they size to their content, so
+     the first emoji dropped into a row made that row taller than the rest and
+     the squares stopped being square. */
+  grid-template-columns: repeat(var(--size), 1fr);
+  grid-template-rows: repeat(var(--size), 1fr);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--region-border);
+  border: 1.5px solid var(--region-border);
+  box-shadow: var(--shadow-2);
+  /* Rapid tapping must never select, zoom, or pop the iOS callout. */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Grid items refuse to shrink below their content without this, which would
+     also push the squares out of shape. */
+  min-width: 0;
+  min-height: 0;
+  background: var(--fill);
+  font-size: calc(var(--cell) * 0.56);
+  line-height: 1;
+  /* Region boundaries are drawn in ink; cells inside one region get a hairline
+     so the grid stays countable. Only top and left edges are drawn, so a shared
+     edge is never doubled. */
+  border-top: var(--edge-top) solid var(--edge-top-color);
+  border-left: var(--edge-left) solid var(--edge-left-color);
+  transition: filter 140ms var(--ease);
+}
+
+.cell:active {
+  filter: brightness(0.96);
+}
+
+.emoji {
+  animation: settle 200ms var(--ease);
+}
+
+.mark {
+  font-size: calc(var(--cell) * 0.34);
+  line-height: 1;
+  color: var(--stone);
+  font-weight: 500;
+  animation: settle 140ms var(--ease);
+}
+
+/* A guess that cost a life. It stays on the board as a record of the mistake. */
+.wrong {
+  font-size: calc(var(--cell) * 0.42);
+  line-height: 1;
+  color: #d92d20;
+  font-weight: 600;
+  animation: shake 260ms var(--ease);
+}
+
+@keyframes shake {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.15) rotate(-6deg);
+    opacity: 1;
+  }
+  70% {
+    transform: rotate(4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+.solved .emoji {
+  animation: bloom 620ms var(--ease) backwards;
+  animation-delay: calc(var(--ripple, 0) * 55ms);
+}
+
+@keyframes settle {
+  from {
+    transform: scale(0.55);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* The solve moment: emojis pulse outward from the last one placed, like a
+   ripple crossing the board. */
+@keyframes bloom {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.28);
+  }
+}

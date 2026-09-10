@@ -1,0 +1,41 @@
+/** A coordinate on the board. */
+export interface Cell {
+  r: number
+  c: number
+}
+
+/** What the player has put in a square. */
+export const CellState = {
+  /** Untouched. */
+  Empty: 0,
+  /** Pencil mark — "the emoji definitely isn't here". */
+  Marked: 1,
+  /** The emoji. */
+  Placed: 2,
+  /** A guess that turned out to be wrong. Costs a life, and stays on the board. */
+  Wrong: 3,
+} as const
+export type CellState = (typeof CellState)[keyof typeof CellState]
+
+/** The player's board, `grid[row][col]`. */
+export type Grid = CellState[][]
+
+/** Region (colour) id per square, `regions[row][col]`, ids `0..size-1`. */
+export type Regions = number[][]
+
+/**
+ * Bumped whenever a change to generation would produce a different board for
+ * the same seed. Stored alongside every solve so old replays stay replayable.
+ */
+export const GEN_VERSION = 1
+
+export interface Puzzle {
+  size: number
+  seed: number
+  genVersion: number
+  regions: Regions
+  solution: Cell[]
+  emoji: string
+  /** Solver branches explored — the difficulty signal. */
+  nodes: number
+}
