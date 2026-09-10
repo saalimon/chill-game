@@ -11,6 +11,18 @@ const BOUNDARY_WOBBLE = 0.036
 const RULE_WOBBLE = 0.018
 
 /**
+ * Slack around the lattice, in cell units.
+ *
+ * The board's outer boundary sits exactly on the edge of the grid, so half its
+ * stroke and any outward wobble fall outside a viewBox of `0 0 size size` and
+ * get clipped — which left the perimeter visibly thinner and flat-sided next to
+ * the interior lines. The viewBox is grown by this margin and the element is
+ * grown by the same proportion, so the lattice still lands exactly on the cells
+ * underneath.
+ */
+const MARGIN = BOUNDARY_WOBBLE + BOUNDARY_WIDTH
+
+/**
  * Everything drawn on the board: the region washes and all the ink.
  *
  * This sits over the grid of cell buttons and takes no pointer events, so
@@ -40,10 +52,15 @@ export function BoardInk({ regions, seed }: { regions: Regions; seed: number }) 
     return { fills, rules }
   }, [regions, seed, size])
 
+  const span = size + MARGIN * 2
+  const offset = `${(-MARGIN / size) * 100}%`
+  const extent = `${(span / size) * 100}%`
+
   return (
     <svg
       className={styles.ink}
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={`${-MARGIN} ${-MARGIN} ${span} ${span}`}
+      style={{ left: offset, top: offset, width: extent, height: extent }}
       aria-hidden="true"
       focusable="false"
     >

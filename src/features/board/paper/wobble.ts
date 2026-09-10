@@ -48,22 +48,30 @@ function driftedPoints(a: Point, b: Point, { rng, amplitude, step = DEFAULT_STEP
 /**
  * Smooth a run of points into a curve.
  *
- * Each point becomes the control handle of a quadratic that ends halfway to the
- * next one, which rounds the drift into something pen-like instead of a
- * zig-zag of straight hops.
+ * Each point is the handle of a quadratic ending halfway to the next, which
+ * rounds the drift into something pen-like rather than a zig-zag of straight
+ * hops. The last segment ends *on* the final point instead of a midpoint, which
+ * makes the curve symmetric: walking the same points backwards traces exactly
+ * the same line. Two regions share a boundary and walk it in opposite
+ * directions, so without that they would each draw a slightly different curve
+ * and leave a sliver of paper between their fills.
  */
 function smooth(points: Point[], moveTo = true): string {
   if (points.length < 2) return ''
   let d = moveTo ? `M${n(points[0].x)} ${n(points[0].y)}` : ''
+
+  if (points.length === 2) {
+    return `${d}L${n(points[1].x)} ${n(points[1].y)}`
+  }
+
   for (let i = 1; i < points.length - 1; i++) {
     const point = points[i]
     const next = points[i + 1]
-    const midX = (point.x + next.x) / 2
-    const midY = (point.y + next.y) / 2
-    d += `Q${n(point.x)} ${n(point.y)} ${n(midX)} ${n(midY)}`
+    const last = i === points.length - 2
+    const endX = last ? next.x : (point.x + next.x) / 2
+    const endY = last ? next.y : (point.y + next.y) / 2
+    d += `Q${n(point.x)} ${n(point.y)} ${n(endX)} ${n(endY)}`
   }
-  const last = points[points.length - 1]
-  d += `L${n(last.x)} ${n(last.y)}`
   return d
 }
 
@@ -154,6 +162,49 @@ export function makeEdgeDrift(seed: number, amplitude: number, step = DEFAULT_ST
 }
 
 /**
+ * Split a corner-to-corner edge into single lattice steps.
+ *
+ * Two regions meeting along a boundary do not necessarily corner in the same
+ * places: where three regions meet, one side may run straight past a point the
+ * other turns at. Asking for drift by corner-to-corner segment would then hand
+ * the two sides different lines and leave a sliver of paper between their fills.
+ * The unit lattice edge is the one decomposition both sides always agree on.
+ */
+function unitSteps(a: Point, b: Point): [Point, Point][] {
+  const dx = Math.sign(b.x - a.x)
+  const dy = Math.sign(b.y - a.y)
+  const count = Math.abs(b.x - a.x) + Math.abs(b.y - a.y)
+  const steps: [Point, Point][] = []
+  let from = a
+  for (let i = 0; i < count; i++) {
+    const to = { x: from.x + dx, y: from.y + dy }
+    steps.push([from, to])
+    from = to
+  }
+  return steps
+}
+
+/**
+ * Draw an edge one lattice step at a time.
+ *
+ * Each step is smoothed on its own, which anchors the line exactly on every
+ * lattice point it passes. Smoothing a whole edge in one run would leave those
+ * points as mere curve handles, and a curve's shape there depends on its
+ * neighbours — so the side that runs straight through a junction would bend near
+ * it while the side that corners there started on it, and the two would drift
+ * apart by a hair. Anchoring every step keeps them identical.
+ */
+function drawEdge(a: Point, b: Point, drift: EdgeDrift, moveTo: boolean): string {
+  let d = ''
+  let first = moveTo
+  for (const [from, to] of unitSteps(a, b)) {
+    d += smooth(drift(from, to), first)
+    first = false
+  }
+  return d
+}
+
+/**
  * A region outline drawn from shared edges.
  *
  * The same path is used for the region's fill and its ink, so colour and line
@@ -168,13 +219,12 @@ export function pathFromLoop(loop: Point[], drift: EdgeDrift): string {
   // where one edge finishes and the next begins.
   let d = ''
   for (let i = 0; i < loop.length; i++) {
-    const edge = drift(loop[i], loop[(i + 1) % loop.length])
-    d += smooth(edge, i === 0)
+    d += drawEdge(loop[i], loop[(i + 1) % loop.length], drift, i === 0)
   }
   return `${d}Z`
 }
 
 /** One open line — an inner rule — drawn from shared edges. */
 export function pathFromLine(a: Point, b: Point, drift: EdgeDrift): string {
-  return smooth(drift(a, b))
+  return drawEdge(a, b, drift, true)
 }

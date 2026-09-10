@@ -1,8 +1,9 @@
 .ink {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  /* Placement comes from the component: the layer is grown past the grid so the
+     outer boundary's stroke is not clipped, and offset by the same amount so the
+     lattice still lines up with the cells. */
+  overflow: visible;
   /* The buttons underneath own every tap. */
   pointer-events: none;
 }

@@ -193,17 +193,91 @@ describe('pathFromLoop', () => {
 })
 
 describe('pathFromLoop corners', () => {
+  /** Where each drawn segment actually ends. */
+  function endpoints(d: string): string[] {
+    const out: string[] = []
+    for (const [, command, body] of d.matchAll(/([MLQ])([-\d. ]+)/g)) {
+      const nums = (body.match(/-?\d+(\.\d+)?/g) ?? []).map(Number)
+      if (command === 'Q' && nums.length >= 4) out.push(`${nums[2]},${nums[3]}`)
+      else if (nums.length >= 2) out.push(`${nums[0]},${nums[1]}`)
+    }
+    return out
+  }
+
   it('lands exactly on every corner, so regions still read as squares', () => {
-    const drift = makeEdgeDrift(21, 0.04)
-    const d = pathFromLoop(SQUARE, drift)
+    const d = pathFromLoop(SQUARE, makeEdgeDrift(21, 0.04))
+    const landed = new Set(endpoints(d))
+    for (const corner of SQUARE) {
+      expect(landed.has(`${corner.x},${corner.y}`)).toBe(true)
+    }
+  })
+
+  it('lands on every lattice point along a long edge, not only its corners', () => {
+    // A 4-long edge crosses three interior lattice points; the line is anchored
+    // at each so that a neighbour cornering there draws the identical line.
+    const d = pathFromLoop(SQUARE, makeEdgeDrift(21, 0.04))
+    const landed = new Set(endpoints(d))
+    for (const y of [1, 2, 3]) expect(landed.has(`0,${y}`)).toBe(true)
+  })
+})
+
+describe('boundaries where three regions meet', () => {
+  it('draws a shared line identically even when the two sides corner differently', () => {
+    // A tall region on the left faces two stacked regions on the right:
+    //   0 1
+    //   0 2
+    // The left region runs straight down x = 1 and traces it as one long edge.
+    // The right-hand pair each meet it with a single unit edge. Both sides must
+    // still produce the same line, or a sliver of paper shows between them.
+    const drift = makeEdgeDrift(17, 0.04)
+    const tall = pathFromLoop(
+      [
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 1, y: 2 },
+        { x: 0, y: 2 },
+      ],
+      drift,
+    )
+    const upper = pathFromLoop(
+      [
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+        { x: 2, y: 1 },
+        { x: 1, y: 1 },
+      ],
+      drift,
+    )
+    const lower = pathFromLoop(
+      [
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 2, y: 2 },
+        { x: 1, y: 2 },
+      ],
+      drift,
+    )
+
     const fmt = (v: number) => {
       const r = Math.round(v * 1000) / 1000
       return Object.is(r, -0) ? '0' : String(r)
     }
-    // A corner appears as the target of a line command, not as a curve handle.
-    for (const corner of SQUARE.slice(1)) {
-      expect(d).toContain(`L${fmt(corner.x)} ${fmt(corner.y)}`)
+    const pointsOf = (d: string) =>
+      (d.match(/-?\d+(\.\d+)?/g) ?? []).map(Number).reduce<string[]>((acc, _, i, all) => {
+        if (i % 2 === 0 && i + 1 < all.length) acc.push(`${fmt(all[i])} ${fmt(all[i + 1])}`)
+        return acc
+      }, [])
+
+    const tallPoints = new Set(pointsOf(tall))
+    // Every point the neighbours put on the shared line must be on the tall
+    // region's outline too.
+    for (const d of [upper, lower]) {
+      const onSharedLine = pointsOf(d).filter((p) => {
+        const [x, y] = p.split(' ').map(Number)
+        return Math.abs(x - 1) < 0.2 && y > 0 && y < 2
+      })
+      expect(onSharedLine.length).toBeGreaterThan(0)
+      for (const p of onSharedLine) expect(tallPoints.has(p)).toBe(true)
     }
-    expect(d).toMatch(new RegExp(`^M${fmt(SQUARE[0].x)} ${fmt(SQUARE[0].y)}`))
   })
 })

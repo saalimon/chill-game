@@ -12,8 +12,6 @@
   );
   width: var(--side);
   aspect-ratio: 1;
-  /* Room for the ink to overshoot the lattice without being clipped. */
-  padding: 2px;
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
