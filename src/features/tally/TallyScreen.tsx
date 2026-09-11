@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { DoodleSprite } from '@/features/board/doodles/Doodle'
 import { suitOf, type Card as CardModel } from '@/game/tally/cards'
 import { markFor, swapIn, weakestIndex } from '@/game/tally/run'
+import { typicalDeal } from '@/game/tally/outlook'
 import { DeckStrip } from './DeckStrip'
 import { Card } from './Card'
 import { Grid } from './Grid'
@@ -24,6 +25,21 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
    * the screen, not pending state.
    */
   const [tookCard, setTookCard] = useState<{ card: CardModel; before: CardModel[]; at: number } | null>(null)
+
+  /**
+   * What the deck deals now, and what each offer would make of it.
+   *
+   * Sampling four decks, so it is memoised on the offers rather than run on
+   * every render of the sheet.
+   */
+  const outlook = useMemo(() => {
+    if (run.status !== 'drafting') return null
+    const now = typicalDeal(run.deck)
+    return {
+      now,
+      offers: run.offers.map((card) => typicalDeal(swapIn(run.deck, card)) - now),
+    }
+  }, [run.status, run.deck, run.offers])
   const over = run.status === 'won' || run.status === 'lost'
 
   // Report the finished run once, so it leaves a trace on the games list.
@@ -152,6 +168,20 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
                       aria-label={`Take the ${card.rank} of ${suitOf(card.suit).name}`}
                     >
                       <Card card={card} scoring={false} />
+                      {outlook && (
+                        <span
+                          className={`${styles.offerDelta} ${
+                            outlook.offers[i] > 0
+                              ? styles.better
+                              : outlook.offers[i] < 0
+                                ? styles.worse
+                                : ''
+                          }`}
+                        >
+                          {outlook.offers[i] > 0 ? '+' : ''}
+                          {outlook.offers[i]}
+                        </span>
+                      )}
                       <span className={styles.offerTake}>Take</span>
                     </button>
                   ))}
@@ -159,8 +189,10 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
 
                 <div className={styles.deckBlock}>
                   <span className={styles.deckLabel}>
-                    Your deck — replaces your{' '}
-                    {run.deck[weakestIndex(run.deck)].rank} of{' '}
+                    Your deck — typically {outlook?.now ?? 0} a deal
+                  </span>
+                  <span className={styles.deckSub}>
+                    Taking a card replaces your {run.deck[weakestIndex(run.deck)].rank} of{' '}
                     {suitOf(run.deck[weakestIndex(run.deck)].suit).name}
                   </span>
                   <DeckStrip deck={run.deck} swapIndex={weakestIndex(run.deck)} swap="leaving" />

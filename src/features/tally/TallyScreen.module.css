@@ -340,3 +340,29 @@
 .offer {
   border-radius: var(--radius-md);
 }
+
+.deckSub {
+  color: var(--ink-faint);
+  font-size: var(--text-micro);
+  margin-top: -3px;
+}
+
+/* What taking this card does to what the deck typically deals. A lone high card
+   usually reads as an upgrade and is not; this is where that shows. */
+.offerDelta {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-hand);
+  font-size: 19px;
+  line-height: 1;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.better {
+  color: var(--pen-blue);
+}
+
+.worse {
+  color: var(--pen-red);
+}
