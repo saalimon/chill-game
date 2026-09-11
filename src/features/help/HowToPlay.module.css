@@ -100,10 +100,21 @@
 .table th:last-child,
 .value {
   text-align: right;
+  vertical-align: bottom;
+}
+
+.handCell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.handName {
+  font-size: var(--text-sm);
 }
 
 .table td {
-  padding: 4px 0;
+  padding: 6px 0;
   border-bottom: 1px solid color-mix(in srgb, var(--paper-shade) 55%, transparent);
 }
 

@@ -1,0 +1,30 @@
+.hand {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.card {
+  width: 17px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 2px 3px 2px 3px / 3px 2px 3px 2px;
+  color: var(--suit-ink);
+}
+
+.rank {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.suit {
+  width: 8px;
+  height: 8px;
+}

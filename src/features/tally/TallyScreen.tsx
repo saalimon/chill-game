@@ -49,7 +49,7 @@ export function TallyScreen() {
 
         <div className={styles.board}>
           {run.grid ? (
-            <Grid rows={run.grid} score={run.lastScore} />
+            <Grid rows={run.grid} score={run.lastScore} dealNumber={run.dealsPlayed} />
           ) : (
             <p className={styles.empty}>Deal your cards across the page.</p>
           )}

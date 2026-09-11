@@ -12,9 +12,31 @@
 }
 
 .cards {
+  --gap: 5px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
+  gap: var(--gap);
+}
+
+/*
+ * The tidy-up.
+ *
+ * Each card starts offset by however far it moved when the row was sorted —
+ * one column is its own width plus the gap — and slides home. The slide lives
+ * on this wrapper so it cannot fight the lift a scoring card does.
+ */
+.slot {
+  min-width: 0;
+  animation: tidy 460ms var(--ease) both;
+}
+
+@keyframes tidy {
+  from {
+    transform: translateX(calc(var(--shift) * (100% + var(--gap))));
+  }
+  to {
+    transform: none;
+  }
 }
 
 .readout {

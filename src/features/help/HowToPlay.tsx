@@ -1,6 +1,8 @@
 import { GAMES, type GameId } from '@/game/games'
 import { HAND_TYPES } from '@/game/tally/hands'
 import { HAND_VALUES } from '@/game/tally/score'
+import { EXAMPLE_HANDS } from './exampleHands'
+import { MiniHand } from './MiniHand'
 import { WorkedBoard } from './WorkedBoard'
 import styles from './HowToPlay.module.css'
 
@@ -80,7 +82,12 @@ function TallyHelp() {
         <tbody>
           {STRONGEST_FIRST.map((type) => (
             <tr key={type}>
-              <td>{HAND_NAMES[type]}</td>
+              <td>
+                <span className={styles.handCell}>
+                  <span className={styles.handName}>{HAND_NAMES[type]}</span>
+                  <MiniHand cards={EXAMPLE_HANDS[type]} label={`an example ${HAND_NAMES[type]}`} />
+                </span>
+              </td>
               <td className={styles.value}>
                 {HAND_VALUES[type].chips} × {HAND_VALUES[type].mult}
               </td>
