@@ -22,12 +22,18 @@
   --paper-shade: #e4dcc7;
 
   --ink: #2f3d4a;
-  --ink-soft: #55677a;
-  --ink-faint: #8a94a0;
+  /* Measured against the paper: the previous faint ink sat at 2.75:1, below the
+     4.5:1 AA needs — and it carried the round counter, the deck summary and the
+     replacement warning, which are the lines a new player depends on. */
+  --ink-soft: #46586b;
+  --ink-faint: #616c78;
   --ink-rule: rgb(47 61 74 / 0.22);
 
   --pen-pink: #e0466b;
   --pen-blue: #7d9ac2;
+  /* Text-weight blue. The pen blue is a fill colour and sits at 2.6:1 on paper,
+     which is fine for a pin and far too pale for a word. */
+  --pen-blue-ink: #456489;
   /* Darkened from #d9b93f, which failed contrast as a rank digit on cream. */
   --pen-yellow: #a8861a;
   --pen-red: #d0442f;
@@ -102,12 +108,13 @@
     --paper-shade: #b3a686;
 
     --ink: #2a3340;
-    --ink-soft: #4b5768;
-    --ink-faint: #6d7788;
+    --ink-soft: #3a4554;
+    --ink-faint: #434c58;
     --ink-rule: rgb(42 51 64 / 0.26);
 
     --pen-pink: #c23a5c;
     --pen-blue: #5c7ba6;
+    --pen-blue-ink: #2f4257;
     --pen-yellow: #b08f22;
     --pen-red: #b23522;
     --pen-ink: #2a3340;

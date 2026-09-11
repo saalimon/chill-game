@@ -1,6 +1,7 @@
 import { arrangeRow } from '@/game/tally/arrange'
 import { cardId, type Card as CardModel } from '@/game/tally/cards'
-import type { GridScore } from '@/game/tally/score'
+import { describeHand } from '@/game/tally/describe'
+import { HAND_VALUES, type GridScore } from '@/game/tally/score'
 import { Card } from './Card'
 import styles from './Grid.module.css'
 
@@ -45,8 +46,11 @@ export function Grid({ rows, score, dealNumber }: GridProps) {
             <div className={styles.cards}>
               {arranged.map(({ card, dealtAt }, position) => (
                 <div
-                  // Remounting on every deal is what replays the slide.
-                  key={`${dealNumber}-${cardId(card)}`}
+                  // Keyed by seat, not by card: a deck may hold copies, so two
+                  // identical cards can share a row — measured at one row in six
+                  // — and keying by identity collided, which made a row briefly
+                  // render nine cards across two lines.
+                  key={`${dealNumber}-${r}-${position}`}
                   className={styles.slot}
                   style={{ '--shift': dealtAt - position } as React.CSSProperties}
                 >
@@ -56,9 +60,21 @@ export function Grid({ rows, score, dealNumber }: GridProps) {
             </div>
             {rowScore && (
               <div className={styles.readout}>
-                <span className={styles.handName}>{HAND_NAMES[rowScore.hand.type]}</span>
+                <span className={styles.handName}>
+                  {HAND_NAMES[rowScore.hand.type]}
+                  {/* Which cards make it. The outline shows them; this says so,
+                      which is how you check the game's working. */}
+                  <span className={styles.made}> · {describeHand(rowScore.hand)}</span>
+                </span>
                 <span className={styles.sum}>
-                  {rowScore.chips} × {rowScore.mult} ={' '}
+                  {/* The base and the ranks that scored, so the middle number
+                      is derivable rather than a black box between two sums the
+                      player can already check. */}
+                  <span className={styles.workings}>
+                    {HAND_VALUES[rowScore.hand.type].chips}
+                    {rowScore.hand.scoring.map((card) => `+${card.rank}`).join('')}
+                  </span>{' '}
+                  = {rowScore.chips} × {rowScore.mult} ={' '}
                   <b className={styles.rowTotal}>{rowScore.total}</b>
                 </span>
               </div>

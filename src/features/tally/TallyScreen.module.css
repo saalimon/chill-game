@@ -59,6 +59,8 @@
   justify-self: end;
   display: inline-flex;
   align-items: center;
+  /* Help and abandon-run sat edge to edge, and one of them wipes the run. */
+  gap: var(--space-xs);
 }
 
 .round {
@@ -295,7 +297,7 @@
 .gained {
   font-family: var(--font-hand);
   font-size: 20px;
-  color: var(--pen-blue);
+  color: var(--pen-blue-ink);
   animation: gained 900ms var(--ease) both;
 }
 
@@ -315,7 +317,7 @@
 }
 
 .cleared {
-  color: var(--pen-blue);
+  color: var(--pen-blue-ink);
   font-size: var(--text-micro-up);
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -323,7 +325,7 @@
 
 /* Win and loss used to differ by a single word in identical styling. */
 .won .doneTitle {
-  color: var(--pen-blue);
+  color: var(--pen-blue-ink);
 }
 
 .lost .doneTitle {
@@ -360,9 +362,36 @@
 }
 
 .better {
-  color: var(--pen-blue);
+  color: var(--pen-blue-ink);
 }
 
 .worse {
   color: var(--pen-red);
+}
+
+/* The cleared-round announcement, inline where the Deal button sits. */
+.clearedBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: var(--space-xs) var(--space-xs) 0;
+  animation: rise 320ms var(--ease) both;
+}
+
+.clearedTitle {
+  font-family: var(--font-hand);
+  font-size: 24px;
+  color: var(--pen-blue-ink);
+}
+
+.clearedMeta {
+  font-size: var(--text-caption);
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.clearedBlock .deal {
+  align-self: stretch;
+  margin: 0;
 }

@@ -17,6 +17,8 @@ import styles from './TallyScreen.module.css'
 export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => void } = {}) {
   const { run, deal, draft, restart, mark } = useTallyRun()
   const [helpOpen, setHelpOpen] = useState(false)
+  /** The offer sheet is opened deliberately, so the scored board stays visible. */
+  const [offerOpen, setOfferOpen] = useState(false)
   const hints = useOfferHints()
   const [confirmNew, setConfirmNew] = useState(false)
   /**
@@ -127,10 +129,28 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
             <p className={styles.doneMeta}>
               {run.status === 'won'
                 ? `${run.dealsPlayed} deals · best deal ${run.bestDeal}`
-                : `Round ${run.round} fell short — ${run.scored} of ${mark}`}
+                : `${run.scored} of ${mark} · ${run.round - 1} round${
+                    run.round === 2 ? '' : 's'
+                  } cleared · ${run.dealsPlayed} deals · best deal ${run.bestDeal}`}
             </p>
             <button type="button" className={styles.primary} onClick={restart}>
               New run
+            </button>
+          </div>
+        ) : run.status === 'drafting' && !offerOpen ? (
+          /*
+           * Announced inline rather than behind a sheet. The offer used to slide
+           * up the instant a round cleared, covering the board that had just
+           * cleared it — so the result of the deal you played was hidden by the
+           * reward for it, on almost every round.
+           */
+          <div className={styles.clearedBlock}>
+            <span className={styles.clearedTitle}>Round {run.round} cleared</span>
+            <span className={styles.clearedMeta}>
+              {run.scored} of {mark} · next round needs {markFor(run.round + 1)}
+            </span>
+            <button type="button" className={styles.deal} onClick={() => setOfferOpen(true)}>
+              Take a card
             </button>
           </div>
         ) : (
@@ -153,7 +173,7 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
         />
       )}
 
-      {(run.status === 'drafting' || tookCard) && (
+      {((run.status === 'drafting' && offerOpen) || tookCard) && (
         <div className={styles.draftLayer} role="dialog" aria-label="take a card">
           <div className={styles.draft}>
             {tookCard === null ? (
@@ -175,6 +195,7 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
                       className={styles.offer}
                       onClick={() => {
                         setTookCard({ card, before: [...run.deck], at: weakestIndex(run.deck) })
+                        setOfferOpen(false)
                         draft(i)
                       }}
                       aria-label={`Take the ${card.rank} of ${suitOf(card.suit).name}`}
@@ -210,7 +231,14 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
                   <DeckStrip deck={run.deck} swapIndex={weakestIndex(run.deck)} swap="leaving" />
                 </div>
 
-                <button type="button" className={styles.skip} onClick={() => draft(null)}>
+                <button
+                  type="button"
+                  className={styles.skip}
+                  onClick={() => {
+                    setOfferOpen(false)
+                    draft(null)
+                  }}
+                >
                   Keep my deck instead
                 </button>
               </>
@@ -256,6 +284,7 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
               onClick={() => {
                 setConfirmNew(false)
                 setTookCard(null)
+                setOfferOpen(false)
                 restart()
               }}
             >

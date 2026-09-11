@@ -59,9 +59,12 @@ export function useTallyRun() {
 
   // Save after every action: a run lost to a backgrounded tab would be the
   // worst bug this game could have, and determinism makes the save tiny.
+  //
+  // A finished run is kept too. Clearing it on the last deal meant backgrounding
+  // the app on the result screen lost the result — the one screen worth coming
+  // back to. It is cleared when a new run starts instead.
   useEffect(() => {
-    if (run.status === 'won' || run.status === 'lost') write(null)
-    else write({ seed: run.seed, rounds: run.rounds, moves: moves.current })
+    write({ seed: run.seed, rounds: run.rounds, moves: moves.current })
   }, [run])
 
   const deal = useCallback(() => {
@@ -88,6 +91,7 @@ export function useTallyRun() {
 
   const restart = useCallback(() => {
     moves.current = []
+    write(null)
     setRun(newRun(randomSeed()))
   }, [])
 
