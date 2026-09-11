@@ -137,15 +137,25 @@ describe('generate', () => {
     })
   })
 
-  it('generates a 9x9 board well inside the frame budget', () => {
-    const times: number[] = []
-    for (let i = 0; i < 30; i++) {
-      const t0 = performance.now()
-      generate(90000 + i, 9)
-      times.push(performance.now() - t0)
-    }
-    times.sort((a, b) => a - b)
-    const p95 = times[Math.floor(times.length * 0.95)]
-    expect(p95).toBeLessThan(150)
+  /**
+   * Guard the algorithm, not the machine.
+   *
+   * This used to assert a wall-clock p95, which passed here and failed on CI —
+   * a shared runner is two to four times slower, so the assertion was measuring
+   * the hardware. Solver branches are deterministic for a fixed seed, so they
+   * catch a pruning regression exactly and identically everywhere. The clock is
+   * still checked, but only loosely enough to catch a genuine pathology.
+   */
+  it('solves its largest board without an explosion of searching', () => {
+    const nodes = Array.from({ length: 30 }, (_, i) => generate(90000 + i, 9).nodes).sort(
+      (a, b) => a - b,
+    )
+    expect(nodes[Math.floor(nodes.length * 0.95)]).toBeLessThan(20_000)
+  })
+
+  it('generates a 9x9 board without pathological slowness', () => {
+    const started = performance.now()
+    for (let i = 0; i < 20; i++) generate(91000 + i, 9)
+    expect((performance.now() - started) / 20).toBeLessThan(1_000)
   })
 })

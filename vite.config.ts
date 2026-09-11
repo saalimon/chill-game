@@ -52,5 +52,12 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    /*
+     * Generous on purpose. Some tests wait out the real double-tap window and
+     * others generate puzzles, which takes a few seconds here and several times
+     * that on a shared CI runner — the 5s default turned a slow machine into a
+     * failing build.
+     */
+    testTimeout: 30_000,
   },
 })
