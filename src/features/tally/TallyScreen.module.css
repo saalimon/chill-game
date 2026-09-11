@@ -257,3 +257,37 @@
     opacity: 0;
   }
 }
+
+.newRun {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.newRun:active {
+  background: var(--paper-shade);
+  color: var(--ink);
+}
+
+.deckBlock {
+  width: 100%;
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--paper-shade);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.deckLabel {
+  color: var(--ink-faint);
+  font-size: var(--text-micro-up);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

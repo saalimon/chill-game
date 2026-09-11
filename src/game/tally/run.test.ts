@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { COLUMNS, ROWS, deal } from './deal'
-import { markFor, newRun, playDeal, takeDraft, type Run } from './run'
+import { markFor, newRun, playDeal, takeDraft, weakestIndex, type Run } from './run'
 import { startingDeck } from './cards'
 import { mulberry32 } from '@/game/grid/rng'
 
@@ -154,3 +154,34 @@ describe('a run', () => {
 function run0Rounds() {
   return newRun(1).rounds
 }
+
+describe('weakestIndex', () => {
+  it('finds the lowest-ranked card', () => {
+    const deck = [
+      { rank: 5, suit: 'star' as const },
+      { rank: 2, suit: 'flower' as const },
+      { rank: 7, suit: 'cloud' as const },
+    ]
+    expect(weakestIndex(deck)).toBe(1)
+  })
+
+  it('takes the first when several share the lowest rank', () => {
+    const deck = [
+      { rank: 3, suit: 'star' as const },
+      { rank: 1, suit: 'flower' as const },
+      { rank: 1, suit: 'cloud' as const },
+    ]
+    expect(weakestIndex(deck)).toBe(1)
+  })
+
+  /** The screen shows this card as the one leaving, so the two must agree. */
+  it('names the card a draft actually replaces', () => {
+    const drafting = playDeal({ ...newRun(2026), scored: markFor(1) - 1 })
+    const leaving = drafting.deck[weakestIndex(drafting.deck)]
+    const after = takeDraft(drafting, 0)
+
+    const count = (deck: typeof after.deck, card: typeof leaving) =>
+      deck.filter((c) => c.rank === card.rank && c.suit === card.suit).length
+    expect(count(after.deck, leaving)).toBe(count(drafting.deck, leaving) - 1)
+  })
+})

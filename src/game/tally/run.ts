@@ -98,7 +98,26 @@ function makeOffers(run: Run): Card[] {
 }
 
 /**
+ * Which card a draft would drop.
+ *
+ * Exported because the draft screen shows the player exactly which card is
+ * about to leave, and a screen that worked this out for itself could disagree
+ * with what the swap actually does.
+ */
+export function weakestIndex(deck: readonly Card[]): number {
+  let weakest = 0
+  for (let i = 1; i < deck.length; i++) {
+    if (deck[i].rank < deck[weakest].rank) weakest = i
+  }
+  return weakest
+}
+
+/**
  * Take a card into the deck, dropping the weakest one to make room.
+ *
+ * Exported so the draft screen can show the deck the player is about to have.
+ * Working it out separately there would risk the preview disagreeing with what
+ * actually happens.
  *
  * Drafting swaps rather than adds, because adding dilutes: fifteen cards are
  * dealt however big the deck is, so every extra card makes the deck a smaller
@@ -107,13 +126,9 @@ function makeOffers(run: Run): Card[] {
  * a deck-builder where building the deck hurts. Holding the deck at a fixed size
  * makes a draft an improvement in composition and nothing else.
  */
-function swapIn(deck: readonly Card[], taken: Card): Card[] {
-  let weakest = 0
-  for (let i = 1; i < deck.length; i++) {
-    if (deck[i].rank < deck[weakest].rank) weakest = i
-  }
+export function swapIn(deck: readonly Card[], taken: Card): Card[] {
   const next = [...deck]
-  next[weakest] = taken
+  next[weakestIndex(deck)] = taken
   return next
 }
 
