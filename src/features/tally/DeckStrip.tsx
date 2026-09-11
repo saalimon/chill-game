@@ -1,5 +1,5 @@
 import { MiniCard } from '@/features/help/MiniCard'
-import { arrangeRow } from '@/game/tally/arrange'
+import { groupByRank } from '@/game/tally/group'
 import { SUITS, cardId, type Card } from '@/game/tally/cards'
 import styles from './DeckStrip.module.css'
 
@@ -22,17 +22,24 @@ interface DeckStripProps {
  * better" — which the simulation says is the weaker way to play.
  */
 export function DeckStrip({ deck, swapIndex, swap }: DeckStripProps) {
-  const sorted = arrangeRow(deck)
+  // Broken into runs of equal rank: "four 2s and three 3s" is something you see
+  // rather than count one card at a time.
+  const groups = groupByRank(deck)
 
   return (
     <div className={styles.wrap}>
       <div className={styles.cards}>
-        {sorted.map(({ card, dealtAt }) => (
-          <MiniCard
-            key={`${cardId(card)}-${dealtAt}`}
-            card={card}
-            state={swap && dealtAt === swapIndex ? swap : 'normal'}
-          />
+        {groups.map((group) => (
+          <span key={group.rank} className={styles.group}>
+            {group.cards.map(({ card, at }) => (
+              <MiniCard
+                key={`${cardId(card)}-${at}`}
+                card={card}
+                state={swap && at === swapIndex ? swap : 'normal'}
+              />
+            ))}
+            <span className={styles.groupCount}>{group.cards.length}</span>
+          </span>
         ))}
       </div>
 

@@ -10,7 +10,37 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 3px;
+  /* The gap between runs is what makes the grouping legible, so it is wider
+     than the gap inside one. */
+  gap: 4px 11px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.group > span:not(:last-child) {
+  margin-right: 0;
+}
+
+.group {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 2px;
+  align-items: flex-start;
+}
+
+/* How many of this rank the deck holds. */
+.groupCount {
+  align-self: flex-end;
+  margin-left: 1px;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
 }
 
 .counts {

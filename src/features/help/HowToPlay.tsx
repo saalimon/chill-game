@@ -109,7 +109,14 @@ function TallyHelp() {
   )
 }
 
-export function HowToPlay({ game, onClose }: { game: GameId; onClose: () => void }) {
+interface HowToPlayProps {
+  game: GameId
+  onClose: () => void
+  /** Tally's difficulty setting, shown only where it applies. */
+  hints?: { shown: boolean; onToggle: () => void }
+}
+
+export function HowToPlay({ game, onClose, hints }: HowToPlayProps) {
   const def = GAMES[game]
 
   return (
@@ -124,6 +131,19 @@ export function HowToPlay({ game, onClose }: { game: GameId; onClose: () => void
         <h2 className={styles.title}>{def.name}</h2>
 
         {game === 'tally' ? <TallyHelp /> : <GridHelp game={game} />}
+
+        {game === 'tally' && hints && (
+          <label className={styles.setting}>
+            <input type="checkbox" checked={hints.shown} onChange={hints.onToggle} />
+            <span>
+              <b>Show what each card would do</b>
+              <span className={styles.settingNote}>
+                Puts a figure on each offered card. Working that out yourself is most of the
+                decision, so this is off to begin with.
+              </span>
+            </span>
+          </label>
+        )}
 
         <button type="button" className={styles.done} onClick={onClose}>
           Got it

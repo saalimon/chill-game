@@ -157,3 +157,37 @@
     opacity: 0;
   }
 }
+
+/* A difficulty setting, kept with the rules rather than hidden in a menu. */
+.setting {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  width: 100%;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--paper-shade);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.setting input {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: var(--pen-blue);
+  flex: none;
+}
+
+.setting b {
+  display: block;
+  font-weight: 600;
+}
+
+.settingNote {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+}

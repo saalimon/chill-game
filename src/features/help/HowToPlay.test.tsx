@@ -109,3 +109,33 @@ describe('Tally', () => {
     expect(screen.getByText(/replaces|swap/i)).toBeInTheDocument()
   })
 })
+
+describe('the draft hints setting', () => {
+  it('is offered for Tally', () => {
+    render(<HowToPlay game="tally" onClose={vi.fn()} hints={{ shown: false, onToggle: vi.fn() }} />)
+    expect(screen.getByRole('checkbox', { name: /show what each card would do/i })).toBeInTheDocument()
+  })
+
+  it('starts unticked, since the hints make the run easier', () => {
+    render(<HowToPlay game="tally" onClose={vi.fn()} hints={{ shown: false, onToggle: vi.fn() }} />)
+    expect(screen.getByRole('checkbox')).not.toBeChecked()
+  })
+
+  it('reflects the setting being on', () => {
+    render(<HowToPlay game="tally" onClose={vi.fn()} hints={{ shown: true, onToggle: vi.fn() }} />)
+    expect(screen.getByRole('checkbox')).toBeChecked()
+  })
+
+  it('reports a change', async () => {
+    const user = userEvent.setup()
+    const onToggle = vi.fn()
+    render(<HowToPlay game="tally" onClose={vi.fn()} hints={{ shown: false, onToggle }} />)
+    await user.click(screen.getByRole('checkbox'))
+    expect(onToggle).toHaveBeenCalled()
+  })
+
+  it('is not offered for the puzzles, which have no such setting', () => {
+    render(<HowToPlay game="queens" onClose={vi.fn()} hints={{ shown: false, onToggle: vi.fn() }} />)
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+  })
+})

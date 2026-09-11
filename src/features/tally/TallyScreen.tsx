@@ -4,6 +4,7 @@ import { DoodleSprite } from '@/features/board/doodles/Doodle'
 import { suitOf, type Card as CardModel } from '@/game/tally/cards'
 import { markFor, swapIn, weakestIndex } from '@/game/tally/run'
 import { typicalDeal } from '@/game/tally/outlook'
+import { useOfferHints } from '@/lib/useOfferHints'
 import { DeckStrip } from './DeckStrip'
 import { Card } from './Card'
 import { Grid } from './Grid'
@@ -16,6 +17,7 @@ import styles from './TallyScreen.module.css'
 export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => void } = {}) {
   const { run, deal, draft, restart, mark } = useTallyRun()
   const [helpOpen, setHelpOpen] = useState(false)
+  const hints = useOfferHints()
   const [confirmNew, setConfirmNew] = useState(false)
   /**
    * What the last draft did, kept only to show it.
@@ -37,9 +39,13 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
     const now = typicalDeal(run.deck)
     return {
       now,
-      offers: run.offers.map((card) => typicalDeal(swapIn(run.deck, card)) - now),
+      // Only sampled when the hints are on: four decks judged for a number
+      // nobody asked to see is work for nothing.
+      offers: hints.shown
+        ? run.offers.map((card) => typicalDeal(swapIn(run.deck, card)) - now)
+        : null,
     }
-  }, [run.status, run.deck, run.offers])
+  }, [run.status, run.deck, run.offers, hints.shown])
   const over = run.status === 'won' || run.status === 'lost'
 
   // Report the finished run once, so it leaves a trace on the games list.
@@ -139,7 +145,13 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
         )}
       </div>
 
-      {helpOpen && <HowToPlay game="tally" onClose={() => setHelpOpen(false)} />}
+      {helpOpen && (
+        <HowToPlay
+          game="tally"
+          onClose={() => setHelpOpen(false)}
+          hints={{ shown: hints.shown, onToggle: hints.toggle }}
+        />
+      )}
 
       {(run.status === 'drafting' || tookCard) && (
         <div className={styles.draftLayer} role="dialog" aria-label="take a card">
@@ -168,7 +180,7 @@ export function TallyScreen({ onRunEnd }: { onRunEnd?: (record: RunRecord) => vo
                       aria-label={`Take the ${card.rank} of ${suitOf(card.suit).name}`}
                     >
                       <Card card={card} scoring={false} />
-                      {outlook && (
+                      {outlook?.offers && (
                         <span
                           className={`${styles.offerDelta} ${
                             outlook.offers[i] > 0
