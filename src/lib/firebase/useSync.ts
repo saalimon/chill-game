@@ -4,8 +4,8 @@ import { isFirebaseConfigured } from './app'
 import { useAccount } from './auth'
 import { fetchStats, pushSolve, readLocalStats, writeLocalStats } from './db'
 import { enqueue, flush, pending } from './outbox'
-import { applySolve } from './stats'
-import type { SolveRecord, Stats } from './types'
+import { applyRun, applySolve } from './stats'
+import type { RunRecord, SolveRecord, Stats } from './types'
 
 /**
  * Keeps finished puzzles and the running totals in step with the database.
@@ -78,5 +78,17 @@ export function useSync() {
     [account.uid, send],
   )
 
-  return { account, stats, queued, recordSolve }
+  /**
+   * Bank a finished run.
+   *
+   * Local only for now: a run has no replay format to send yet, and a finished
+   * run leaving no trace at all was worse than one that lives on the device.
+   */
+  const recordRun = useCallback((record: RunRecord) => {
+    const next = applyRun(readLocalStats(), record, dateKey())
+    setStats(next)
+    writeLocalStats(next)
+  }, [])
+
+  return { account, stats, queued, recordSolve, recordRun }
 }

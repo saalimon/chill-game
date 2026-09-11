@@ -1,5 +1,5 @@
 import { mulberry32, randInt, type Rng } from '@/game/grid/rng'
-import { MAX_RANK, SUIT_IDS, startingDeck, type Card } from './cards'
+import { MAX_RANK, SUIT_IDS, cardId, startingDeck, type Card } from './cards'
 import { deal } from './deal'
 import { scoreGrid, type GridScore } from './score'
 
@@ -73,28 +73,48 @@ export function newRun(seed: number, rounds = SHORT_ROUNDS): Run {
 }
 
 /**
- * Three cards to choose between.
+ * Three cards to choose between, no two the same.
  *
  * Offers lean towards ranks the deck already holds, because a lone high card is
  * close to worthless here: fifteen of a twenty-card deck are dealt every time,
  * so an unmatched card mostly displaces one that was completing a pair. Measured
- * over two thousand runs, purely high-rank offers made drafting actively worse
- * than skipping. Pairing up is what pays.
+ * over two thousand runs, purely high-rank offers made drafting worse than
+ * skipping altogether.
+ *
+ * Copies are allowed — a built deck may hold four 6s, and stacking a rank is the
+ * whole point of pairing up. Refusing cards the deck already held was tried and
+ * collapsed the win rate from a third to a twentieth: the starting deck holds
+ * every rank in every suit, so nothing could ever pair.
+ *
+ * What is refused is the same card twice in one draft, which is a choice
+ * between identical options, and anything at or below the weakest card, since a
+ * draft swaps that card out and taking a 1 to replace a 1 changes nothing.
  */
 function makeOffers(run: Run): Card[] {
   const rng = rngFor(run, 0x5eed)
-  // A draft swaps out the weakest card, so anything at or below that rank is a
-  // non-choice: taking a 1 to replace a 1 changes nothing.
   const weakest = Math.min(...run.deck.map((card) => card.rank))
   const ranksHeld = [...new Set(run.deck.map((card) => card.rank))].filter((r) => r > weakest)
 
-  return Array.from({ length: DRAFT_OFFERS }, () => {
+  const offers: Card[] = []
+  const taken = new Set<string>()
+
+  // Bounded: there are always far more distinct cards available than offers.
+  for (let attempt = 0; attempt < 60 && offers.length < DRAFT_OFFERS; attempt++) {
     const pairUp = rng() < 0.7 && ranksHeld.length > 0
     const rank = pairUp
       ? ranksHeld[randInt(rng, ranksHeld.length)]
       : Math.min(MAX_RANK, 3 + randInt(rng, MAX_RANK - 2))
-    return { rank: Math.max(rank, weakest + 1), suit: SUIT_IDS[randInt(rng, SUIT_IDS.length)] }
-  })
+
+    const card = {
+      rank: Math.max(rank, weakest + 1),
+      suit: SUIT_IDS[randInt(rng, SUIT_IDS.length)],
+    }
+    if (taken.has(cardId(card))) continue
+    taken.add(cardId(card))
+    offers.push(card)
+  }
+
+  return offers
 }
 
 /**

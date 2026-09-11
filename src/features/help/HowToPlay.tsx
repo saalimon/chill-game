@@ -68,7 +68,10 @@ function TallyHelp() {
           Each <b>row</b> is scored as its own five-card hand, and the three add up.
         </li>
         <li>
-          Beat <b>the mark</b> before your deals run out, or the run ends.
+          Every deal <b>adds</b> to your round score — you have four to reach the target.
+        </li>
+        <li>
+          Clear it and the score <b>resets</b>, the target <b>climbs</b>, and you take a card.
         </li>
       </ul>
 

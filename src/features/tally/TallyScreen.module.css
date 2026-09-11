@@ -59,7 +59,6 @@
   justify-self: end;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
 }
 
 .round {
@@ -259,13 +258,13 @@
 }
 
 .newRun {
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   display: inline-grid;
   place-items: center;
   border-radius: 50%;
   color: var(--ink-soft);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1;
 }
 
@@ -290,4 +289,54 @@
   font-size: var(--text-micro-up);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* The score a deal just added, so it is clear that deals accumulate. */
+.gained {
+  font-family: var(--font-hand);
+  font-size: 20px;
+  color: var(--pen-blue);
+  animation: gained 900ms var(--ease) both;
+}
+
+@keyframes gained {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  70% {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0.75;
+    transform: none;
+  }
+}
+
+.cleared {
+  color: var(--pen-blue);
+  font-size: var(--text-micro-up);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Win and loss used to differ by a single word in identical styling. */
+.won .doneTitle {
+  color: var(--pen-blue);
+}
+
+.lost .doneTitle {
+  color: var(--pen-red);
+}
+
+.offerTake {
+  display: block;
+  margin-top: 5px;
+  font-size: var(--text-micro);
+  color: var(--ink-soft);
+}
+
+.offer {
+  border-radius: var(--radius-md);
 }

@@ -185,3 +185,51 @@ describe('weakestIndex', () => {
     expect(count(after.deck, leaving)).toBe(count(drafting.deck, leaving) - 1)
   })
 })
+
+describe('the cards offered', () => {
+  /** Play a run, collecting every draft it offers along the way. */
+  const everyOffer = (seeds: number) => {
+    const seen: { offers: typeof runSample.offers; deck: typeof runSample.deck }[] = []
+    for (let seed = 0; seed < seeds; seed++) {
+      let run = newRun(seed)
+      for (let step = 0; step < 200; step++) {
+        if (run.status === 'won' || run.status === 'lost') break
+        if (run.status === 'drafting') {
+          seen.push({ offers: run.offers, deck: run.deck })
+          run = takeDraft(run, 0)
+        } else run = playDeal(run)
+      }
+    }
+    return seen
+  }
+  const runSample = newRun(1)
+
+  it('never offers the same card twice in one draft', () => {
+    for (const { offers } of everyOffer(120)) {
+      const ids = offers.map((c) => `${c.suit}${c.rank}`)
+      expect(new Set(ids).size, ids.join(' ')).toBe(ids.length)
+    }
+  })
+
+  it('may offer a card the deck already holds, since stacking a rank is the point', () => {
+    // Refusing these was tried and collapsed the win rate from a third to a
+    // twentieth: the starting deck holds every rank in every suit, so nothing
+    // could ever pair up.
+    const anyHeld = everyOffer(120).some(({ offers, deck }) => {
+      const held = new Set(deck.map((c) => `${c.suit}${c.rank}`))
+      return offers.some((card) => held.has(`${card.suit}${card.rank}`))
+    })
+    expect(anyHeld).toBe(true)
+  })
+
+  it('never offers a card at or below the one it would replace', () => {
+    for (const { offers, deck } of everyOffer(120)) {
+      const weakest = Math.min(...deck.map((c) => c.rank))
+      for (const card of offers) expect(card.rank).toBeGreaterThan(weakest)
+    }
+  })
+
+  it('still offers three cards', () => {
+    for (const { offers } of everyOffer(40)) expect(offers).toHaveLength(3)
+  })
+})

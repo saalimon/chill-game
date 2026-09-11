@@ -62,7 +62,10 @@ export function classify(cards: Card[]): Hand {
   const straight = isStraight(cards)
 
   if (straight && flush) return { type: 'straightFlush', scoring: [...cards] }
-  if (groups[0].length === 4) return { type: 'fourOfAKind', scoring: groups[0] }
+  // Four of each rank exist, so a larger group means a card was duplicated
+  // somewhere. Reading it as four of a kind fails safe; falling past every
+  // branch used to score the strongest possible row as a high card.
+  if (groups[0].length >= 4) return { type: 'fourOfAKind', scoring: groups[0] }
   if (groups[0].length === 3 && groups[1]?.length === 2) {
     return { type: 'fullHouse', scoring: [...cards] }
   }

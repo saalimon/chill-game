@@ -152,3 +152,23 @@ describe('against an independent reading', () => {
     }
   })
 })
+
+describe('groups larger than four', () => {
+  /**
+   * Only four of each rank exist, so this should be unreachable — but it was
+   * reachable through a duplicated card, and fell through every branch to score
+   * as a high card: the strongest row in the game paying the least. Reading it
+   * as four of a kind fails safe if it is ever reachable again.
+   */
+  it('reads five of a rank as four of a kind rather than a high card', () => {
+    const five: Card[] = [
+      { rank: 3, suit: 'star' },
+      { rank: 3, suit: 'flower' },
+      { rank: 3, suit: 'cloud' },
+      { rank: 3, suit: 'moon' },
+      { rank: 3, suit: 'star' },
+    ]
+    expect(classify(five).type).toBe('fourOfAKind')
+    expect(classify(five).scoring.length).toBeGreaterThanOrEqual(4)
+  })
+})

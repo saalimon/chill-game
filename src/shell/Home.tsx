@@ -45,7 +45,8 @@ function GameCard({ game }: { game: GridGameDef }) {
   )
 }
 
-function RunCard({ game }: { game: RunGameDef }) {
+function RunCard({ game, stats }: { game: RunGameDef; stats: Stats }) {
+  const record = stats.runs[game.id]
   return (
     <section className={styles.card}>
       <span className={styles.pin} aria-hidden="true" />
@@ -54,6 +55,12 @@ function RunCard({ game }: { game: RunGameDef }) {
         <span className={styles.eyebrow}>Play a run</span>
       </div>
       <p className={styles.blurb}>{game.blurb}</p>
+      {record && (
+        <p className={styles.blurb}>
+          {record.won} won of {record.played} · best {record.bestScore} · furthest round{' '}
+          {record.furthestRound}
+        </p>
+      )}
       <nav className={styles.sizes}>
         {game.lengths.map((length) => (
           <Link key={length.id} to={`/run/${game.id}`} className={styles.size}>
@@ -119,7 +126,7 @@ export function Home({
         <GameCard key={game.id} game={game} />
       ))}
 
-      {isRun(GAMES.tally) && <RunCard game={GAMES.tally} />}
+      {isRun(GAMES.tally) && <RunCard game={GAMES.tally} stats={stats} />}
 
       {/* Both games are played the same way, so this is said once. */}
       <ul className={styles.how}>

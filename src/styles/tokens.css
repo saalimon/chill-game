@@ -28,7 +28,8 @@
 
   --pen-pink: #e0466b;
   --pen-blue: #7d9ac2;
-  --pen-yellow: #d9b93f;
+  /* Darkened from #d9b93f, which failed contrast as a rank digit on cream. */
+  --pen-yellow: #a8861a;
   --pen-red: #d0442f;
   --pen-ink: #2f3d4a;
 
