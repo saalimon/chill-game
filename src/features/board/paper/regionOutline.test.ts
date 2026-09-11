@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Regions } from '@/game/starbattle/types'
+import type { Regions } from '@/game/grid/types'
 import { boundaryEdgeCount, innerRules, regionLoops, type Loop } from './regionOutline'
 
 /** Loops come back in cell units; compare them as plain tuples. */

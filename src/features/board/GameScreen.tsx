@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
-import type { Puzzle } from '@/game/starbattle/types'
-import { difficultyOf } from '@/game/starbattle/difficulty'
-import { gameOf } from '@/game/starbattle/games'
+import { useEffect, useRef, useState } from 'react'
+import type { Puzzle } from '@/game/grid/types'
+import { difficultyOf } from '@/game/grid/difficulty'
+import { GAMES, isGrid } from '@/game/games'
 import { formatDuration } from '@/lib/format'
 import { useGameSession } from '@/features/session/useGameSession'
 import { replayLog, type Move } from '@/features/session/session'
@@ -12,6 +12,8 @@ import { DoodleSprite } from './doodles/Doodle'
 import { Lives } from './Lives'
 import { RuleStrip } from './RuleStrip'
 import { SoundToggle } from './SoundToggle'
+import { HelpButton } from '@/features/help/HelpButton'
+import { HowToPlay } from '@/features/help/HowToPlay'
 import { Timer } from './Timer'
 import styles from './GameScreen.module.css'
 
@@ -33,8 +35,9 @@ export function GameScreen({
   nextLabel = 'New puzzle',
 }: GameScreenProps) {
   const game = useGameSession(puzzle)
-  const def = gameOf(puzzle.game)
+  const def = GAMES[puzzle.game]
   const sound = useSound()
+  const [helpOpen, setHelpOpen] = useState(false)
   const { session } = game
   const solved = session.status === 'solved'
   const lost = session.status === 'lost'
@@ -66,6 +69,7 @@ export function GameScreen({
               <Timer read={game.readClock} frozenMs={solved ? (session.solvedAt ?? 0) : null} />
             </span>
             <SoundToggle muted={sound.muted} onToggle={sound.toggle} />
+            <HelpButton onClick={() => setHelpOpen(true)} />
           </span>
         </header>
 
@@ -98,7 +102,7 @@ export function GameScreen({
               <Lives left={session.lives} />
               <span className={styles.hint}>Tap to rule out · double tap to place</span>
             </div>
-            <RuleStrip game={def} />
+            {isGrid(def) && <RuleStrip game={def} />}
           </>
         )}
 
@@ -137,6 +141,8 @@ export function GameScreen({
         </button>
         </div>
       </div>
+
+      {helpOpen && <HowToPlay game={puzzle.game} onClose={() => setHelpOpen(false)} />}
     </div>
   )
 }

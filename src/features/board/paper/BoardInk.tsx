@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { Regions } from '@/game/starbattle/types'
+import type { Regions } from '@/game/grid/types'
 import { innerRules, regionLoops } from './regionOutline'
 import { makeEdgeDrift, pathFromLine, pathFromLoop } from './wobble'
 import styles from './BoardInk.module.css'

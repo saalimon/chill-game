@@ -1,4 +1,4 @@
-import type { TokenId } from '@/game/starbattle/tokens'
+import type { TokenId } from '@/game/grid/tokens'
 
 export interface Glyph {
   /** Path data on a 24x24 canvas. */

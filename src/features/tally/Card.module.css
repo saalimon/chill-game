@@ -1,0 +1,51 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  aspect-ratio: 0.72;
+  min-width: 0;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  /* Unequal corners, like the sheets: cut by hand rather than stamped out. */
+  border-radius: 5px 7px 5px 8px / 7px 5px 8px 5px;
+  color: var(--suit-ink);
+  box-shadow: 0 1px 2px rgb(52 58 34 / 0.22);
+  transition:
+    transform 220ms var(--ease),
+    box-shadow 220ms var(--ease),
+    background 220ms var(--ease);
+}
+
+.rank {
+  font-family: var(--font-hand);
+  /* The rank carries the game — it is what you scan a row for. It used to be
+     half the size of the suit glyph, which inverted the hierarchy. */
+  font-size: clamp(19px, 6.4vw, 30px);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.suit {
+  width: 30%;
+  height: 30%;
+}
+
+/*
+ * A card taking part in a hand lifts off the page. Only these add their rank to
+ * the score, so showing which ones count is how the player learns the scoring.
+ *
+ * The cue is deliberately the same for every suit. It used to be a wash in the
+ * suit's own ink, which made the identical meaning shout in pink for stars and
+ * whisper in grey for clouds.
+ */
+.scoring {
+  background: var(--paper);
+  border-color: var(--ink);
+  border-width: 3px;
+  transform: translateY(-4px);
+  box-shadow: 0 5px 8px -2px rgb(52 58 34 / 0.4);
+}

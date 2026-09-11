@@ -64,7 +64,7 @@ describe('generate', () => {
     for (const size of SIZES) expect(generate(2024, size).size).toBe(size)
   })
 
-  describe.each(SIZES)('a %ix%i board', (size) => {
+  describe.each([...SIZES])('a %ix%i board', (size) => {
     const puzzles = SEEDS.map((seed) => generate(seed, size))
 
     it('has exactly one solution', () => {

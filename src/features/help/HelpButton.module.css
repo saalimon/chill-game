@@ -1,0 +1,23 @@
+.button {
+  /* 44px is the smallest comfortable target; the icon inside stays small. */
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  transition:
+    color 140ms var(--ease),
+    background 140ms var(--ease);
+}
+
+.button:active {
+  background: var(--paper-shade);
+  color: var(--ink);
+}
+
+.icon {
+  width: 19px;
+  height: 19px;
+  display: block;
+}

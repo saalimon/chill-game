@@ -1,4 +1,4 @@
-import type { GameId } from './games'
+import type { GameId } from '../games'
 import type { Token } from './tokens'
 
 /** A coordinate on the board. */

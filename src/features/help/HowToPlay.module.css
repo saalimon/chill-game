@@ -1,0 +1,193 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgb(20 22 16 / 0.44);
+  animation: fade 200ms var(--ease) both;
+}
+
+/* The same sheet of paper as everything else, slid up from the bottom. */
+.sheet {
+  width: min(100%, 480px);
+  max-height: 92dvh;
+  overflow-y: auto;
+  margin: var(--space-sm);
+  margin-bottom: calc(var(--safe-bottom) + var(--space-sm));
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--paper);
+  border-radius: 8px 11px 9px 12px / 11px 8px 12px 9px;
+  box-shadow: var(--shadow-sheet);
+  animation: rise 300ms var(--ease) both;
+}
+
+.eyebrow {
+  color: var(--ink-faint);
+  font-size: var(--text-micro-up);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--font-hand);
+  font-size: 28px;
+  line-height: 1.1;
+  margin-bottom: var(--space-xs);
+}
+
+.rules,
+.controls {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: var(--font-hand);
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.controls {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--paper-shade);
+}
+
+.rules b,
+.controls b {
+  font-weight: 700;
+}
+
+.example {
+  margin: var(--space-md) 0 var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.caption {
+  font-size: var(--text-micro);
+  color: var(--ink-faint);
+}
+
+.table {
+  width: 100%;
+  margin-top: var(--space-sm);
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th {
+  text-align: left;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--paper-shade);
+  color: var(--ink-faint);
+  font-size: var(--text-micro-up);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.table th:last-child,
+.value {
+  text-align: right;
+  vertical-align: bottom;
+}
+
+.handCell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.handName {
+  font-size: var(--text-sm);
+}
+
+.table td {
+  padding: 6px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--paper-shade) 55%, transparent);
+}
+
+.value {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.aside {
+  margin: var(--space-sm) 0 0;
+  font-size: var(--text-caption);
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.done {
+  margin-top: var(--space-md);
+  padding: 11px 26px;
+  border-radius: 12px 15px 13px 16px / 15px 12px 16px 13px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-hand);
+  font-size: 20px;
+}
+
+.done:active {
+  transform: translateY(1px);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A difficulty setting, kept with the rules rather than hidden in a menu. */
+.setting {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  width: 100%;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--paper-shade);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.setting input {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: var(--pen-blue);
+  flex: none;
+}
+
+.setting b {
+  display: block;
+  font-weight: 600;
+}
+
+.settingNote {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+}

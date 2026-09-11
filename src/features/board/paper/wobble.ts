@@ -1,4 +1,4 @@
-import { mulberry32, type Rng } from '@/game/starbattle/rng'
+import { mulberry32, type Rng } from '@/game/grid/rng'
 import type { Point } from './regionOutline'
 
 export interface WobbleOptions {

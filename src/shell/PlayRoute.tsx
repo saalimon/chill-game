@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
-import { generate } from '@/game/starbattle/generate'
-import { GAMES, gameOf, type GameId } from '@/game/starbattle/games'
-import { dailyPuzzle, dailySpec, dateKey } from '@/game/starbattle/daily'
-import { difficultyOf } from '@/game/starbattle/difficulty'
+import { generate } from '@/game/grid/generate'
+import { GAMES, isGrid, type GameId } from '@/game/games'
+import { dailyPuzzle, dailySpec, dateKey } from '@/game/grid/daily'
+import { difficultyOf } from '@/game/grid/difficulty'
 import { GameScreen } from '@/features/board/GameScreen'
 import type { SolveRecord } from '@/lib/firebase/types'
 import type { Move } from '@/features/session/session'
@@ -23,7 +23,8 @@ export function PlayRoute({ onSolved }: RouteProps) {
   const boardSize = Number(size)
   const [seed, setSeed] = useState(randomSeed)
 
-  const valid = isGameId(game) && gameOf(game).sizes.includes(boardSize)
+  const def = isGameId(game) ? GAMES[game] : null
+  const valid = def !== null && isGrid(def) && def.sizes.includes(boardSize)
   const puzzle = useMemo(
     () => (valid ? generate(seed, boardSize, game as GameId) : null),
     [seed, boardSize, game, valid],

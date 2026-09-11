@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mulberry32 } from '@/game/starbattle/rng'
+import { mulberry32 } from '@/game/grid/rng'
 import { makeEdgeDrift, pathFromLoop, wobbleLine, wobbleLoop } from './wobble'
 
 const A = { x: 0, y: 0 }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { GAME_IDS, GAMES, type GameDef } from '@/game/starbattle/games'
-import { dailySpec } from '@/game/starbattle/daily'
+import { GAMES, gridGames, isRun, type GridGameDef, type RunGameDef } from '@/game/games'
+import { dailySpec } from '@/game/grid/daily'
 import { formatDuration } from '@/lib/format'
 import { isFirebaseConfigured } from '@/lib/firebase/app'
 import { useAppUpdate } from '@/lib/pwa/useAppUpdate'
@@ -24,7 +24,7 @@ const TIERS: Record<string, string> = {
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-function GameCard({ game }: { game: GameDef }) {
+function GameCard({ game }: { game: GridGameDef }) {
   return (
     <section className={styles.card}>
       <span className={styles.pin} aria-hidden="true" />
@@ -38,6 +38,34 @@ function GameCard({ game }: { game: GameDef }) {
           <Link key={size} to={`/play/${game.id}/${size}`} className={styles.size}>
             <span className={styles.sizeNum}>{size}</span>
             <span className={styles.sizeTier}>{TIERS[`${game.id}:${size}`]}</span>
+          </Link>
+        ))}
+      </nav>
+    </section>
+  )
+}
+
+function RunCard({ game, stats }: { game: RunGameDef; stats: Stats }) {
+  const record = stats.runs[game.id]
+  return (
+    <section className={styles.card}>
+      <span className={styles.pin} aria-hidden="true" />
+      <div className={styles.cardHead}>
+        <h2 className={styles.cardTitle}>{game.name}</h2>
+        <span className={styles.eyebrow}>Play a run</span>
+      </div>
+      <p className={styles.blurb}>{game.blurb}</p>
+      {record && (
+        <p className={styles.blurb}>
+          {record.won} won of {record.played} · best {record.bestScore} · furthest round{' '}
+          {record.furthestRound}
+        </p>
+      )}
+      <nav className={styles.sizes}>
+        {game.lengths.map((length) => (
+          <Link key={length.id} to={`/run/${game.id}`} className={styles.size}>
+            <span className={styles.sizeNum}>{length.rounds}</span>
+            <span className={styles.sizeTier}>rounds</span>
           </Link>
         ))}
       </nav>
@@ -94,9 +122,11 @@ export function Home({
         </span>
       </Link>
 
-      {GAME_IDS.map((id) => (
-        <GameCard key={id} game={GAMES[id]} />
+      {gridGames().map((game) => (
+        <GameCard key={game.id} game={game} />
       ))}
+
+      {isRun(GAMES.tally) && <RunCard game={GAMES.tally} stats={stats} />}
 
       {/* Both games are played the same way, so this is said once. */}
       <ul className={styles.how}>
