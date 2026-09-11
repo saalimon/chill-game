@@ -58,13 +58,24 @@ export function Grid({ rows, score, dealNumber }: GridProps) {
               <div className={styles.readout}>
                 <span className={styles.handName}>{HAND_NAMES[rowScore.hand.type]}</span>
                 <span className={styles.sum}>
-                  {rowScore.chips} × {rowScore.mult}
+                  {rowScore.chips} × {rowScore.mult} ={' '}
+                  <b className={styles.rowTotal}>{rowScore.total}</b>
                 </span>
               </div>
             )}
           </div>
         )
       })}
+
+      {/* The last link in the chain: rows, then the deal, then the round. Without
+          it the player has to multiply and add three rows in their head to see
+          where the round score just came from. */}
+      {score && (
+        <div className={styles.dealTotal}>
+          <span>This deal</span>
+          <span className={styles.dealSum}>{score.total}</span>
+        </div>
+      )}
     </div>
   )
 }
