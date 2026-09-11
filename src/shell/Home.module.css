@@ -272,3 +272,37 @@
   padding: 0 var(--space-xs);
   margin: 0;
 }
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0 var(--space-sm);
+  text-align: center;
+}
+
+.refresh {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgb(255 255 255 / 0.4);
+  background: rgb(255 255 255 / 0.1);
+  color: var(--paper);
+  font-size: var(--text-caption);
+}
+
+.refresh:active:not(:disabled) {
+  background: rgb(255 255 255 / 0.2);
+}
+
+.refresh:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.footerNote {
+  color: var(--paper);
+  opacity: 0.7;
+  font-size: var(--text-micro);
+  max-width: 30ch;
+}

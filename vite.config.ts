@@ -24,6 +24,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registration is done in src/lib/pwa/updates.ts instead, so the app can
+      // watch for new builds and decide when it is safe to reload.
+      injectRegister: null,
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Chilled Games',

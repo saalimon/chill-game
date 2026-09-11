@@ -4,6 +4,7 @@ import { GAME_IDS, GAMES, type GameDef } from '@/game/starbattle/games'
 import { dailySpec } from '@/game/starbattle/daily'
 import { formatDuration } from '@/lib/format'
 import { isFirebaseConfigured } from '@/lib/firebase/app'
+import { useAppUpdate } from '@/lib/pwa/useAppUpdate'
 import { signInWithGoogle, SignInError } from '@/lib/firebase/auth'
 import type { Account } from '@/lib/firebase/auth'
 import type { Stats } from '@/lib/firebase/types'
@@ -54,6 +55,7 @@ export function Home({
   queued: number
 }) {
   const [notice, setNotice] = useState<string | null>(null)
+  const update = useAppUpdate()
   const daily = dailySpec()
   const [, month, day] = daily.date.split('-')
   const bestOverall = Object.values(stats.bySize).reduce<number | null>(
@@ -141,6 +143,20 @@ export function Home({
           )}
         </div>
       )}
+
+      <div className={styles.footer}>
+        <button
+          type="button"
+          className={styles.refresh}
+          onClick={update.refresh}
+          disabled={update.refreshing}
+        >
+          {update.refreshing ? 'Refreshing…' : 'Force refresh'}
+        </button>
+        <span className={styles.footerNote}>
+          Clears the offline copy and reloads, if the app ever looks out of date.
+        </span>
+      </div>
 
       {notice && <p className={styles.notice}>{notice}</p>}
     </main>

@@ -138,6 +138,28 @@ keeps the reducer pure. Muting is on the game screen and is remembered. If the
 browser has no audio engine, or blocks it, the game plays in silence rather than
 failing.
 
+### Staying up to date
+
+A service-worker app serves itself from cache, which is what makes it work on a
+plane and also what makes a stale copy so sticky: an installed PWA left open can
+keep running an old build indefinitely.
+
+`src/lib/pwa/updates.ts` registers the worker itself rather than letting the
+plugin inject a script, so the app can decide what to do about a new one. It
+checks on load, whenever the app returns to the foreground, and hourly.
+
+**A new build is taken automatically only from the games list.** Reloading in the
+middle of a puzzle would throw away the board being worked on, so everywhere else
+a small banner waits for the player to pick the moment.
+
+A first install is deliberately not treated as an update — the very first worker
+taking control would otherwise reload the page on someone's first visit.
+
+**Force refresh**, at the bottom of the games list, is the escape hatch: it
+unregisters every worker, deletes every cache and reloads. That recovers a copy
+stuck on an old build, including one whose worker is scoped to a path the app no
+longer lives at.
+
 ### Storage
 
 Because generation is deterministic, a stored solve is a seed plus a move list —
@@ -167,7 +189,7 @@ would otherwise lose a puzzle that was just finished.
 npm test
 ```
 
-252 tests, and the weight sits on the engine because that is the part that can
+267 tests, and the weight sits on the engine because that is the part that can
 silently produce a broken puzzle. Across 40 seeds × 5 board sizes, every
 generated board is asserted to have exactly one solution, `size` contiguous
 regions holding exactly one emoji each, an answer obeying all three rules, and
