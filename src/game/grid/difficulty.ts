@@ -1,4 +1,4 @@
-import type { GameId } from './games'
+import type { GameId } from '../games'
 
 export const DIFFICULTIES = ['easy', 'medium', 'hard'] as const
 export type Difficulty = (typeof DIFFICULTIES)[number]
@@ -11,7 +11,7 @@ export type Difficulty = (typeof DIFFICULTIES)[number]
  * numbers grow steeply with size, which is why a fixed cutoff would be useless —
  * 400 branches is a hard 7x7 and an easy 9x9.
  */
-const CUTOFFS: Record<GameId, Record<number, readonly [number, number]>> = {
+const CUTOFFS: Partial<Record<GameId, Record<number, readonly [number, number]>>> = {
   queens: {
     5: [25, 35],
     6: [58, 107],

@@ -1,4 +1,4 @@
-import type { TokenId } from '@/game/starbattle/tokens'
+import type { TokenId } from '@/game/grid/tokens'
 import { GLYPHS } from './glyphs'
 
 /**

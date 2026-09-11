@@ -1,5 +1,5 @@
-import { CellState, type Grid, type Puzzle } from '@/game/starbattle/types'
-import { key } from '@/game/starbattle/rules'
+import { CellState, type Grid, type Puzzle } from '@/game/grid/types'
+import { key } from '@/game/grid/rules'
 import { Doodle, glyphLabel } from './doodles/Doodle'
 import { BoardInk } from './paper/BoardInk'
 import styles from './Board.module.css'

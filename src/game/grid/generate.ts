@@ -2,10 +2,10 @@ import { pickToken } from './tokens'
 import { mulberry32, randInt, shuffled, type Rng } from './rng'
 import { countSolutions, solve } from './solve'
 import { GEN_VERSION, type Cell, type Puzzle, type Regions } from './types'
-import { GAMES, gameOf, type GameId } from './games'
+import { GAMES, isGrid, type GameId, type GridGameDef } from '../games'
 
 /** Board sizes the one-star game offers, easiest first. */
-export const SIZES = GAMES.queens.sizes
+export const SIZES = (GAMES.queens as GridGameDef).sizes
 
 /**
  * Frontier cells sampled per growth step, with the hungriest region winning.
@@ -323,7 +323,8 @@ function breakSolution(regions: Regions, answer: Set<number>, unwanted: Cell[], 
  * answer remains.
  */
 export function generate(seed: number, size: number, game: GameId = 'queens'): Puzzle {
-  const def = gameOf(game)
+  const def = GAMES[game]
+  if (!isGrid(def)) throw new Error(`${def.name} is not a grid puzzle`)
   if (!def.sizes.includes(size)) {
     throw new Error(
       `${def.name} does not offer ${size}x${size}; expected one of ${def.sizes.join(', ')}`,

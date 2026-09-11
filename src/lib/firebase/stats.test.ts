@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { applySolve } from './stats'
-import { EMPTY_STATS, type SolveRecord, type Stats } from './types'
+import { applyRun, applySolve } from './stats'
+import { EMPTY_STATS, type RunRecord, type SolveRecord, type Stats } from './types'
 
 const solve = (over: Partial<SolveRecord> = {}): SolveRecord => ({
   id: 'x',
@@ -108,5 +108,62 @@ describe('the two games', () => {
   it('files a record with no game recorded under the original game', () => {
     const legacy = { ...solve({ size: 6 }), game: undefined as unknown as 'queens' }
     expect(applySolve(EMPTY_STATS, legacy, '2026-09-10').bySize['queens:6']).toBeDefined()
+  })
+})
+
+describe('runs', () => {
+  const run = (over: Partial<RunRecord> = {}): RunRecord => ({
+    id: 'r1',
+    game: 'tally',
+    seed: 1,
+    rounds: 8,
+    won: false,
+    round: 5,
+    deals: 12,
+    totalScored: 900,
+    bestDeal: 300,
+    completedAt: 0,
+    ...over,
+  })
+
+  it('counts a run that was played but not won', () => {
+    const s = applyRun(EMPTY_STATS, run(), '2026-09-11')
+    expect(s.runs['tally']).toEqual({
+      played: 1,
+      won: 0,
+      bestScore: 900,
+      furthestRound: 5,
+    })
+  })
+
+  it('counts a win', () => {
+    const s = applyRun(EMPTY_STATS, run({ won: true, round: 8 }), '2026-09-11')
+    expect(s.runs['tally'].won).toBe(1)
+  })
+
+  it('keeps the best score and the furthest round reached', () => {
+    let s = applyRun(EMPTY_STATS, run({ totalScored: 900, round: 5 }), '2026-09-11')
+    s = applyRun(s, run({ totalScored: 400, round: 7 }), '2026-09-11')
+    expect(s.runs['tally'].bestScore).toBe(900)
+    expect(s.runs['tally'].furthestRound).toBe(7)
+  })
+
+  it('feeds the same daily streak as a solved puzzle', () => {
+    let s = applyRun(EMPTY_STATS, run(), '2026-09-10')
+    s = applyRun(s, run(), '2026-09-11')
+    expect(s.streak.current).toBe(2)
+  })
+
+  it('leaves puzzle records alone', () => {
+    const withSolve = applySolve(EMPTY_STATS, solve(), '2026-09-11')
+    const after = applyRun(withSolve, run(), '2026-09-11')
+    expect(after.bySize).toEqual(withSolve.bySize)
+    expect(after.solved).toBe(withSolve.solved)
+  })
+
+  it('does not mutate the stats it was given', () => {
+    const before = applyRun(EMPTY_STATS, run(), '2026-09-11')
+    applyRun(before, run(), '2026-09-12')
+    expect(before.runs['tally'].played).toBe(1)
   })
 })

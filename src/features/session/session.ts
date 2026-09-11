@@ -1,5 +1,5 @@
-import { emptyGrid, isSolved } from '@/game/starbattle/rules'
-import { CellState, type Grid, type Puzzle } from '@/game/starbattle/types'
+import { emptyGrid, isSolved } from '@/game/grid/rules'
+import { CellState, type Grid, type Puzzle } from '@/game/grid/types'
 
 /** One committed change to a square. `t` is milliseconds since the session began. */
 export interface Change {

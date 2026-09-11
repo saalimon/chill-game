@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useRef } from 'react'
-import type { Puzzle } from '@/game/starbattle/types'
-import { difficultyOf } from '@/game/starbattle/difficulty'
-import { gameOf } from '@/game/starbattle/games'
+import type { Puzzle } from '@/game/grid/types'
+import { difficultyOf } from '@/game/grid/difficulty'
+import { GAMES, isGrid } from '@/game/games'
 import { formatDuration } from '@/lib/format'
 import { useGameSession } from '@/features/session/useGameSession'
 import { replayLog, type Move } from '@/features/session/session'
@@ -33,7 +33,7 @@ export function GameScreen({
   nextLabel = 'New puzzle',
 }: GameScreenProps) {
   const game = useGameSession(puzzle)
-  const def = gameOf(puzzle.game)
+  const def = GAMES[puzzle.game]
   const sound = useSound()
   const { session } = game
   const solved = session.status === 'solved'
@@ -98,7 +98,7 @@ export function GameScreen({
               <Lives left={session.lives} />
               <span className={styles.hint}>Tap to rule out · double tap to place</span>
             </div>
-            <RuleStrip game={def} />
+            {isGrid(def) && <RuleStrip game={def} />}
           </>
         )}
 

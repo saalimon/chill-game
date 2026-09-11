@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { dateKey, dailyPuzzle, dailySpec } from './daily'
-import { GAME_IDS, GAMES } from './games'
+import { gridGames } from '../games'
 
 describe('dateKey', () => {
   it('formats a date as YYYY-MM-DD', () => {
@@ -32,8 +32,9 @@ describe('dailySpec', () => {
     for (let day = 1; day <= 28; day++) {
       const key = `2026-02-${String(day).padStart(2, '0')}`
       const spec = dailySpec(key)
-      expect(GAME_IDS).toContain(spec.game)
-      expect(GAMES[spec.game].sizes).toContain(spec.size)
+      const game = gridGames().find((g) => g.id === spec.game)
+      expect(game).toBeDefined()
+      expect(game!.sizes).toContain(spec.size)
     }
   })
 
@@ -43,7 +44,7 @@ describe('dailySpec', () => {
         dailySpec(`2026-02-${String(i + 1).padStart(2, '0')}`).game,
       ),
     )
-    expect(games.size).toBe(GAME_IDS.length)
+    expect(games.size).toBe(gridGames().length)
   })
 
   it('varies the size across a month rather than always serving one board', () => {

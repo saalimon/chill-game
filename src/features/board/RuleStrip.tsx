@@ -1,9 +1,9 @@
-import { RULES } from '@/game/starbattle/rules'
-import type { GameDef } from '@/game/starbattle/games'
+import { RULES } from '@/game/grid/rules'
+import type { GridGameDef } from '@/game/games'
 import styles from './RuleStrip.module.css'
 
 /** The three rules, kept on screen so they never have to be remembered. */
-export function RuleStrip({ game }: { game: GameDef }) {
+export function RuleStrip({ game }: { game: GridGameDef }) {
   return (
     <div className={styles.strip}>
       {RULES.map((rule) => (

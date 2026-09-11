@@ -2,7 +2,7 @@
  * Seeded pseudo-random number generator.
  *
  * Every random choice in the puzzle engine flows through here. Nothing in
- * `src/game/starbattle/` may call `Math.random`, because a stored solve is only
+ * `src/game/grid/` may call `Math.random`, because a stored solve is only
  * a seed plus a move list — a board has to be reconstructible from its seed
  * alone, forever.
  */

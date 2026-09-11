@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { generate } from '@/game/starbattle/generate'
-import { CellState } from '@/game/starbattle/types'
+import { generate } from '@/game/grid/generate'
+import { CellState } from '@/game/grid/types'
 import {
   markCell,
   placeCell,

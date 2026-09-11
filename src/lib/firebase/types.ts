@@ -1,6 +1,6 @@
-import type { Difficulty } from '@/game/starbattle/difficulty'
+import type { Difficulty } from '@/game/grid/difficulty'
 import type { Move } from '@/features/session/session'
-import type { GameId } from '@/game/starbattle/games'
+import type { GameId } from '@/game/games'
 
 export type PlayMode = 'free' | 'daily'
 
@@ -34,15 +34,46 @@ export interface SizeStat {
   bestMs: number
 }
 
+/**
+ * One finished run.
+ *
+ * A run has no board and no solve time, so it is recorded separately rather
+ * than bent into the puzzle shape. The seed is kept because a run, like a
+ * puzzle, replays from it.
+ */
+export interface RunRecord {
+  id: string
+  game: GameId
+  seed: number
+  rounds: number
+  won: boolean
+  /** The round it ended on — how far the player got. */
+  round: number
+  deals: number
+  totalScored: number
+  bestDeal: number
+  completedAt: number
+}
+
+export interface RunStat {
+  played: number
+  won: number
+  bestScore: number
+  furthestRound: number
+}
+
 export interface Stats {
   solved: number
   streak: { current: number; longest: number; lastPlayedDate: string | null }
-  /** Keyed `<game>:<size>`, so the two games keep their own best times. */
+  /** Keyed `<game>:<size>`, so the grid puzzles keep their own best times. */
   bySize: Record<string, SizeStat>
+  /** Keyed by game id. Runs have no size to key on. */
+  runs: Record<string, RunStat>
 }
 
 export const EMPTY_STATS: Stats = {
   solved: 0,
   streak: { current: 0, longest: 0, lastPlayedDate: null },
   bySize: {},
+  runs: {},
 }

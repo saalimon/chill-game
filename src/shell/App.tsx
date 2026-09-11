@@ -4,6 +4,7 @@ import { useSync } from '@/lib/firebase/useSync'
 import { useAppUpdate } from '@/lib/pwa/useAppUpdate'
 import { Home } from './Home'
 import { DailyRoute, PlayRoute } from './PlayRoute'
+import { TallyScreen } from '@/features/tally/TallyScreen'
 import { UpdateBanner } from './UpdateBanner'
 
 /**
@@ -34,6 +35,8 @@ export function App() {
         <Route path="/" element={<Home account={account} stats={stats} queued={queued} />} />
         <Route path="/play/:game/:size" element={<PlayRoute onSolved={recordSolve} />} />
         <Route path="/daily" element={<DailyRoute onSolved={recordSolve} />} />
+        {/* A run has no board size, so it does not share the puzzles' route. */}
+        <Route path="/run/tally" element={<TallyScreen />} />
         {/* The play URL used to be /play/:size, before there was a second game. */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

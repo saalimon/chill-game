@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { dateKey } from '@/game/starbattle/daily'
+import { dateKey } from '@/game/grid/daily'
 import { isFirebaseConfigured } from './app'
 import { useAccount } from './auth'
 import { fetchStats, pushSolve, readLocalStats, writeLocalStats } from './db'

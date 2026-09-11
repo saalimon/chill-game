@@ -1,0 +1,39 @@
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+.readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  padding: 0 2px;
+  font-size: var(--text-micro);
+  color: var(--ink-soft);
+  min-height: 15px;
+}
+
+.handName {
+  font-family: var(--font-hand);
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.sum {
+  font-variant-numeric: tabular-nums;
+}

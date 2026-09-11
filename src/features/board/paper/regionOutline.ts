@@ -1,4 +1,4 @@
-import type { Regions } from '@/game/starbattle/types'
+import type { Regions } from '@/game/grid/types'
 
 /** A lattice corner, in cell units: `x` counts columns, `y` counts rows. */
 export interface Point {

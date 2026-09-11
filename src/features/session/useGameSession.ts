@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { Puzzle } from '@/game/starbattle/types'
-import { CellState } from '@/game/starbattle/types'
+import type { Puzzle } from '@/game/grid/types'
+import { CellState } from '@/game/grid/types'
 import { play } from '@/lib/sound/player'
 import {
   markCell,

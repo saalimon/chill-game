@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { generate } from './generate'
-import { GAMES } from './games'
+import { GAMES, type GridGameDef } from '../games'
 import { solve } from './solve'
 import { touches } from './rules'
 import type { Cell, Regions } from './types'
 
-const SIZES = GAMES.twoNotTouch.sizes
+const SIZES = (GAMES.twoNotTouch as GridGameDef).sizes
 const SEEDS = Array.from({ length: 12 }, (_, i) => i * 6151 + 29)
 
 /** Every cell of `region` reachable from any other, moving orthogonally. */
@@ -61,7 +61,7 @@ describe('Two Not Touch', () => {
     expect(generate(88, 9, 'twoNotTouch').regions).not.toEqual(generate(88, 9, 'queens').regions)
   })
 
-  describe.each(SIZES)('a %ix%i board', (size) => {
+  describe.each([...SIZES])('a %ix%i board', (size) => {
     const puzzles = SEEDS.map((seed) => generate(seed, size, 'twoNotTouch'))
 
     it('has exactly one solution', () => {
