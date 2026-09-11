@@ -55,8 +55,14 @@
   line-height: 1;
 }
 
-.round {
+.right {
   justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.round {
   font-family: var(--font-hand);
   font-size: 18px;
   color: var(--ink-soft);

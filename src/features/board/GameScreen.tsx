@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Puzzle } from '@/game/grid/types'
 import { difficultyOf } from '@/game/grid/difficulty'
 import { GAMES, isGrid } from '@/game/games'
@@ -12,6 +12,8 @@ import { DoodleSprite } from './doodles/Doodle'
 import { Lives } from './Lives'
 import { RuleStrip } from './RuleStrip'
 import { SoundToggle } from './SoundToggle'
+import { HelpButton } from '@/features/help/HelpButton'
+import { HowToPlay } from '@/features/help/HowToPlay'
 import { Timer } from './Timer'
 import styles from './GameScreen.module.css'
 
@@ -35,6 +37,7 @@ export function GameScreen({
   const game = useGameSession(puzzle)
   const def = GAMES[puzzle.game]
   const sound = useSound()
+  const [helpOpen, setHelpOpen] = useState(false)
   const { session } = game
   const solved = session.status === 'solved'
   const lost = session.status === 'lost'
@@ -66,6 +69,7 @@ export function GameScreen({
               <Timer read={game.readClock} frozenMs={solved ? (session.solvedAt ?? 0) : null} />
             </span>
             <SoundToggle muted={sound.muted} onToggle={sound.toggle} />
+            <HelpButton onClick={() => setHelpOpen(true)} />
           </span>
         </header>
 
@@ -137,6 +141,8 @@ export function GameScreen({
         </button>
         </div>
       </div>
+
+      {helpOpen && <HowToPlay game={puzzle.game} onClose={() => setHelpOpen(false)} />}
     </div>
   )
 }

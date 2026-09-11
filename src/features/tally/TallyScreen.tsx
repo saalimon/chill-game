@@ -1,13 +1,17 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { DoodleSprite } from '@/features/board/doodles/Doodle'
 import { suitOf } from '@/game/tally/cards'
 import { Card } from './Card'
 import { Grid } from './Grid'
 import { useTallyRun } from './useTallyRun'
+import { HelpButton } from '@/features/help/HelpButton'
+import { HowToPlay } from '@/features/help/HowToPlay'
 import styles from './TallyScreen.module.css'
 
 export function TallyScreen() {
   const { run, deal, draft, restart, mark } = useTallyRun()
+  const [helpOpen, setHelpOpen] = useState(false)
   const over = run.status === 'won' || run.status === 'lost'
   const progress = Math.min(1, run.scored / mark)
 
@@ -22,8 +26,11 @@ export function TallyScreen() {
             ← Games
           </Link>
           <h1 className={styles.title}>Tally</h1>
-          <span className={styles.round}>
-            Round {run.round}/{run.rounds}
+          <span className={styles.right}>
+            <span className={styles.round}>
+              Round {run.round}/{run.rounds}
+            </span>
+            <HelpButton onClick={() => setHelpOpen(true)} />
           </span>
         </header>
 
@@ -69,6 +76,8 @@ export function TallyScreen() {
           </button>
         )}
       </div>
+
+      {helpOpen && <HowToPlay game="tally" onClose={() => setHelpOpen(false)} />}
 
       {run.status === 'drafting' && (
         <div className={styles.draftLayer} role="dialog" aria-label="take a card">
