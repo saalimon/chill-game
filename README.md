@@ -1,20 +1,34 @@
 # Chilled
 
-A small collection of calm puzzle games, built as an installable PWA. It ships
-with one game: **Star Battle**, drawn as marks on a sheet of paper.
+A small collection of calm puzzle games, built as an installable PWA, drawn as
+marks on a sheet of paper. Two games so far: **Queens** and **Two Not Touch**.
 
 Live at **https://deduq.dev/chill-game/**
 
-## The game
+## The games
 
-An n×n grid is divided into n irregular colour regions. Place one doodle in every
-row, every column and every region — and no two may touch, not even diagonally.
+Both are played on an n×n grid divided into n irregular colour regions, and both
+are played the same way:
 
 - **Tap** a square to rule it out (grey ✕)
 - **Double tap** to place the doodle
 - A wrong guess is stamped with a red ✕ and costs one of three guesses
 
-Boards run from 5×5 to 9×9, plus a daily puzzle that is the same for everyone.
+**Queens** — one doodle in every row, column and region, none touching, not even
+diagonally. Boards from 5×5 to 9×9.
+
+**Two Not Touch** — *two* in every row, column and region, still none touching.
+Boards from 8×8 to 10×10. There is no smaller board: two stars in a row must sit
+two columns apart, and below 8×8 the column quota then has nowhere left to go.
+That bound is asserted in the tests rather than assumed.
+
+A daily puzzle rotates between the two games, and is the same board for everyone.
+
+### Queens, not Star Battle
+
+An earlier version called the one-per-line game "Star Battle". That name — and
+"Two Not Touch" — conventionally means the *two*-star puzzle, so the original
+game is now Queens and Two Not Touch is a genuinely separate one.
 
 ### Why the regions are irregular
 
@@ -70,6 +84,24 @@ own, so corners stay hard — smoothing straight through them rounds a grid of
 squares into blobs.
 
 See [DESIGN.md](DESIGN.md) for the full art direction.
+
+### One engine, two games
+
+The games differ by a single number: stars per row, column and region. The
+solver, the region growth, the uniqueness repair, difficulty and the daily all
+take it as a parameter rather than being written twice.
+
+Two places needed real work rather than a parameter:
+
+- **Region growth.** A two-star region needs exactly two stars *and* must stay in
+  one piece, which rules out seeding it from both — two seeds of one region can
+  grow as two islands. Instead a territory is grown per star and neighbouring
+  territories are then paired up; the union of two touching connected areas is
+  connected, so contiguity survives.
+- **Solver pruning.** Two stars per line explodes the search. Precomputing how
+  many cells each region still has available below the current row takes 10×10
+  generation from a 154ms median to 23ms, and its worst case from 970ms to
+  112ms — the difference between a visible freeze and none.
 
 ### Generating a puzzle
 
@@ -135,7 +167,7 @@ would otherwise lose a puzzle that was just finished.
 npm test
 ```
 
-212 tests, and the weight sits on the engine because that is the part that can
+252 tests, and the weight sits on the engine because that is the part that can
 silently produce a broken puzzle. Across 40 seeds × 5 board sizes, every
 generated board is asserted to have exactly one solution, `size` contiguous
 regions holding exactly one emoji each, an answer obeying all three rules, and

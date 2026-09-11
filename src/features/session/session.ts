@@ -62,7 +62,7 @@ function settle(session: Session, grid: Grid, now: number): Session {
   if (session.lives <= 0) {
     return { ...session, grid, solvedAt: null, status: 'lost' }
   }
-  const solved = isSolved(grid, session.puzzle.regions)
+  const solved = isSolved(grid, session.puzzle.regions, session.puzzle.stars)
   return { ...session, grid, solvedAt: solved ? now : null, status: solved ? 'solved' : 'playing' }
 }
 
@@ -81,9 +81,14 @@ function change(session: Session, r: number, c: number, to: CellState, now: numb
   return commit(session, { t: now - session.startedAt, r, c, from, to }, now)
 }
 
-/** Whether this square is one of the emoji positions in the answer. */
+/**
+ * Whether this square is one of the answer's star positions.
+ *
+ * A row holds several stars in the two-star game, so this is a membership test
+ * rather than a lookup by row.
+ */
 const isCorrect = (session: Session, r: number, c: number): boolean =>
-  session.puzzle.solution[r].c === c
+  session.puzzle.solution.some((cell) => cell.r === r && cell.c === c)
 
 /**
  * A single tap: rule the square out, or clear it if it already carries

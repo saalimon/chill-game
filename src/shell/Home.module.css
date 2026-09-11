@@ -91,17 +91,27 @@
   margin: 0;
 }
 
-/* Handwritten notes in the margin. */
+/*
+ * How to play, written on its own scrap of paper.
+ *
+ * It sat directly on the desk at first, but ink on sage is only about 3.7:1 —
+ * short of the 4.5:1 that 18px text needs. On paper it is closer to 12:1, and a
+ * note pinned to the desk is what this design would have done anyway.
+ */
 .how {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: var(--space-md) var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   font-family: var(--font-hand);
-  font-size: 18px;
+  font-size: 19px;
   color: var(--ink);
+  background: var(--paper);
+  border-radius: 6px 9px 7px 10px / 9px 6px 10px 7px;
+  box-shadow: var(--shadow-card);
+  rotate: -0.5deg;
 }
 
 .how b {

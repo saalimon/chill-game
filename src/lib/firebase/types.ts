@@ -1,5 +1,6 @@
 import type { Difficulty } from '@/game/starbattle/difficulty'
 import type { Move } from '@/features/session/session'
+import type { GameId } from '@/game/starbattle/games'
 
 export type PlayMode = 'free' | 'daily'
 
@@ -13,6 +14,8 @@ export type PlayMode = 'free' | 'daily'
  */
 export interface SolveRecord {
   id: string
+  /** Which puzzle this was. Records written before the second game lack it. */
+  game: GameId
   size: number
   seed: number
   genVersion: number
@@ -34,6 +37,7 @@ export interface SizeStat {
 export interface Stats {
   solved: number
   streak: { current: number; longest: number; lastPlayedDate: string | null }
+  /** Keyed `<game>:<size>`, so the two games keep their own best times. */
   bySize: Record<string, SizeStat>
 }
 

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import type { Cell, Regions } from './types'
 import { solve } from './solve'
+import { touches } from './rules'
+
+/** A board split into column stripes — every column its own region. */
+const stripes = (n: number): Regions =>
+  Array.from({ length: n }, () => Array.from({ length: n }, (_, c) => c))
 
 const FIVE: Regions = [
   [0, 0, 1, 1, 2],
@@ -62,5 +67,65 @@ describe('solve', () => {
 
   it('is deterministic — same regions, same result', () => {
     expect(solve(FIVE)).toEqual(solve(FIVE))
+  })
+})
+
+describe('solve with two stars per line', () => {
+  it('finds nothing on a board too small to hold them', () => {
+    // Two stars per row need columns two apart, so a 3-wide row can hold at
+    // most two — but then every row is forced into the same two columns.
+    const tiny: Regions = [
+      [0, 0, 1],
+      [0, 1, 1],
+      [2, 2, 2],
+    ]
+    expect(solve(tiny, { stars: 2 }).solutions).toEqual([])
+  })
+
+  it('puts two stars in every row', () => {
+    const regions = stripes(10)
+    for (const s of solve(regions, { stars: 2, cap: 3 }).solutions) {
+      const perRow = new Map<number, number>()
+      for (const cell of s) perRow.set(cell.r, (perRow.get(cell.r) ?? 0) + 1)
+      expect([...perRow.values()]).toEqual(Array(10).fill(2))
+    }
+  })
+
+  it('puts two stars in every column', () => {
+    for (const s of solve(stripes(10), { stars: 2, cap: 3 }).solutions) {
+      const perCol = new Map<number, number>()
+      for (const cell of s) perCol.set(cell.c, (perCol.get(cell.c) ?? 0) + 1)
+      expect([...perCol.values()].sort()).toEqual(Array(10).fill(2))
+    }
+  })
+
+  it('puts two stars in every region', () => {
+    const regions = stripes(10)
+    for (const s of solve(regions, { stars: 2, cap: 3 }).solutions) {
+      const perRegion = new Map<number, number>()
+      for (const cell of s) {
+        const id = regions[cell.r][cell.c]
+        perRegion.set(id, (perRegion.get(id) ?? 0) + 1)
+      }
+      expect([...perRegion.values()]).toEqual(Array(10).fill(2))
+    }
+  })
+
+  it('never lets two stars touch, including the pair inside one row', () => {
+    for (const s of solve(stripes(10), { stars: 2, cap: 3 }).solutions) {
+      for (let i = 0; i < s.length; i++) {
+        for (let j = i + 1; j < s.length; j++) {
+          expect(touches(s[i], s[j])).toBe(false)
+        }
+      }
+    }
+  })
+
+  it('still solves the one-star game exactly as before', () => {
+    expect(solve(FIVE, { stars: 1 })).toEqual(solve(FIVE))
+  })
+
+  it('honours the cap', () => {
+    expect(solve(stripes(10), { stars: 2, cap: 2 }).solutions.length).toBe(2)
   })
 })

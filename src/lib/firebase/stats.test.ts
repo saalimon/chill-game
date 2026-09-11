@@ -4,6 +4,7 @@ import { EMPTY_STATS, type SolveRecord, type Stats } from './types'
 
 const solve = (over: Partial<SolveRecord> = {}): SolveRecord => ({
   id: 'x',
+  game: 'queens',
   size: 7,
   seed: 1,
   genVersion: 1,
@@ -20,25 +21,25 @@ describe('applySolve', () => {
   it('counts the first solve', () => {
     const s = applySolve(EMPTY_STATS, solve(), '2026-09-10')
     expect(s.solved).toBe(1)
-    expect(s.bySize['7']).toEqual({ solved: 1, bestMs: 90_000 })
+    expect(s.bySize['queens:7']).toEqual({ solved: 1, bestMs: 90_000 })
   })
 
   it('keeps the fastest time for a size', () => {
     let s = applySolve(EMPTY_STATS, solve({ timeMs: 90_000 }), '2026-09-10')
     s = applySolve(s, solve({ timeMs: 120_000 }), '2026-09-10')
-    expect(s.bySize['7']).toEqual({ solved: 2, bestMs: 90_000 })
+    expect(s.bySize['queens:7']).toEqual({ solved: 2, bestMs: 90_000 })
   })
 
   it('records a faster time when one is set', () => {
     let s = applySolve(EMPTY_STATS, solve({ timeMs: 90_000 }), '2026-09-10')
     s = applySolve(s, solve({ timeMs: 40_000 }), '2026-09-10')
-    expect(s.bySize['7'].bestMs).toBe(40_000)
+    expect(s.bySize['queens:7'].bestMs).toBe(40_000)
   })
 
   it('tracks sizes separately', () => {
     let s = applySolve(EMPTY_STATS, solve({ size: 5 }), '2026-09-10')
     s = applySolve(s, solve({ size: 9 }), '2026-09-10')
-    expect(Object.keys(s.bySize).sort()).toEqual(['5', '9'])
+    expect(Object.keys(s.bySize).sort()).toEqual(['queens:5', 'queens:9'])
   })
 
   it('starts a streak at one', () => {
@@ -91,5 +92,21 @@ describe('applySolve', () => {
     applySolve(before, solve(), '2026-09-11')
     expect(before.streak.current).toBe(1)
     expect(before.solved).toBe(1)
+  })
+})
+
+describe('the two games', () => {
+  it('keeps a separate best time for each, even at the same size', () => {
+    let s = applySolve(EMPTY_STATS, solve({ game: 'queens', size: 8, timeMs: 30_000 }), '2026-09-10')
+    s = applySolve(s, solve({ game: 'twoNotTouch', size: 8, timeMs: 200_000 }), '2026-09-10')
+
+    expect(s.bySize['queens:8'].bestMs).toBe(30_000)
+    expect(s.bySize['twoNotTouch:8'].bestMs).toBe(200_000)
+    expect(s.solved).toBe(2)
+  })
+
+  it('files a record with no game recorded under the original game', () => {
+    const legacy = { ...solve({ size: 6 }), game: undefined as unknown as 'queens' }
+    expect(applySolve(EMPTY_STATS, legacy, '2026-09-10').bySize['queens:6']).toBeDefined()
   })
 })

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { CellState, type Regions } from './types'
-import { conflictingCells, emptyGrid, isSolved, placementsOf, touches } from './rules'
+import { generate } from './generate'
+import { emptyGrid, isSolved, placementsOf, touches } from './rules'
 
 /**
  * A hand-built, valid 5x5 board.
@@ -94,58 +95,47 @@ describe('isSolved', () => {
   })
 })
 
-describe('conflictingCells', () => {
-  it('reports nothing for the correct solution', () => {
-    expect(conflictingCells(gridWith(SOLUTION), REGIONS).size).toBe(0)
+describe('isSolved with two stars per line', () => {
+  // Hand-building a valid two-star board is exactly the kind of fixture that
+  // ends up subtly wrong, so take a real one from the generator.
+  const puzzle = generate(2026, 8, 'twoNotTouch')
+
+  const gridOf = (cells: { r: number; c: number }[], size: number) => {
+    const g = emptyGrid(size)
+    for (const { r, c } of cells) g[r][c] = CellState.Placed
+    return g
+  }
+
+  it('accepts the answer', () => {
+    expect(isSolved(gridOf(puzzle.solution, 8), puzzle.regions, 2)).toBe(true)
   })
 
-  it('reports nothing for a partial board that breaks no rule', () => {
-    const g = gridWith([{ r: 0, c: 0 }])
-    expect(conflictingCells(g, REGIONS).size).toBe(0)
+  it('rejects that same answer when judged as a one-star board', () => {
+    expect(isSolved(gridOf(puzzle.solution, 8), puzzle.regions, 1)).toBe(false)
   })
 
-  it('flags both cells sharing a row', () => {
-    const g = gridWith([
+  it('rejects a board that is not yet full', () => {
+    const short = puzzle.solution.slice(0, -1)
+    expect(isSolved(gridOf(short, 8), puzzle.regions, 2)).toBe(false)
+  })
+
+  it('rejects the right number of stars piled into the wrong rows', () => {
+    const piled = [
       { r: 0, c: 0 },
       { r: 0, c: 2 },
-    ])
-    expect(conflictingCells(g, REGIONS)).toEqual(new Set(['0,0', '0,2']))
+      { r: 0, c: 4 },
+      { r: 0, c: 6 },
+    ]
+    expect(isSolved(gridOf(piled, 8), puzzle.regions, 2)).toBe(false)
   })
 
-  it('flags both cells sharing a column', () => {
-    const g = gridWith([
-      { r: 0, c: 0 },
-      { r: 2, c: 0 },
-    ])
-    expect(conflictingCells(g, REGIONS)).toEqual(new Set(['0,0', '2,0']))
+  it('rejects two stars that touch inside one row', () => {
+    const touching = puzzle.solution.filter((c) => c.r !== 0)
+    touching.push({ r: 0, c: 0 }, { r: 0, c: 1 })
+    expect(isSolved(gridOf(touching, 8), puzzle.regions, 2)).toBe(false)
   })
 
-  it('flags both cells sharing a region', () => {
-    // (0,0) and (1,1) are both region 0 — but they also touch, so use (0,0) and (2,0).
-    // (2,0) is region 0 and shares column 0, so pick a region-only clash:
-    // (0,2) and (2,3) are both region 1, different row, different column, not touching.
-    const g = gridWith([
-      { r: 0, c: 2 },
-      { r: 2, c: 3 },
-    ])
-    expect(conflictingCells(g, REGIONS)).toEqual(new Set(['0,2', '2,3']))
-  })
-
-  it('flags both cells when they touch diagonally', () => {
-    // (0,0) region 0, (1,1) region 0 — touching AND same region.
-    const g = gridWith([
-      { r: 0, c: 0 },
-      { r: 1, c: 1 },
-    ])
-    expect(conflictingCells(g, REGIONS)).toEqual(new Set(['0,0', '1,1']))
-  })
-
-  it('leaves an innocent third placement out of the report', () => {
-    const g = gridWith([
-      { r: 0, c: 0 },
-      { r: 0, c: 2 },
-      { r: 4, c: 3 },
-    ])
-    expect(conflictingCells(g, REGIONS)).toEqual(new Set(['0,0', '0,2']))
+  it('defaults to one star per line when not told otherwise', () => {
+    expect(isSolved(gridOf(puzzle.solution, 8), puzzle.regions)).toBe(false)
   })
 })

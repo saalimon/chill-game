@@ -1,3 +1,4 @@
+import type { GameId } from './games'
 import type { Token } from './tokens'
 
 /** A coordinate on the board. */
@@ -36,7 +37,10 @@ export type Regions = number[][]
 export const GEN_VERSION = 2
 
 export interface Puzzle {
+  game: GameId
   size: number
+  /** Stars per row, column and region. */
+  stars: number
   seed: number
   genVersion: number
   regions: Regions

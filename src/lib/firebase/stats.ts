@@ -14,7 +14,9 @@ function daysBetween(from: string, to: string): number {
  * database, and so the streak rules can be tested without a clock.
  */
 export function applySolve(stats: Stats, record: SolveRecord, today: string): Stats {
-  const sizeKey = String(record.size)
+  // Keyed by game as well as size: an 8x8 Queens and an 8x8 Two Not Touch are
+  // not the same achievement and should not share a best time.
+  const sizeKey = `${record.game ?? 'queens'}:${record.size}`
   const previous = stats.bySize[sizeKey]
 
   const { current, longest, lastPlayedDate } = stats.streak

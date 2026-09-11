@@ -90,6 +90,12 @@ The desk's grain is a small tiled SVG `data:` URI at low opacity — **not** a l
 `feTurbulence` filter, which over a full-screen layer costs real battery on a
 phone.
 
+## Two games, one look
+
+Queens and Two Not Touch share every visual: the same board, ink, doodles and
+controls. Only the rule strip's wording changes, taken from the game definition
+rather than hardcoded, so the board never has to know which puzzle it is showing.
+
 ## Sound
 
 Synthesised with the Web Audio API, not shipped as audio files: a handful of

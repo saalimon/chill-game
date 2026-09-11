@@ -24,36 +24,36 @@ export function placementsOf(grid: Grid): Cell[] {
 }
 
 /**
- * The cells involved in a broken rule. Both sides of a clash are reported, so
- * the board can highlight them together; placements that break nothing are left
- * out even when other cells are in conflict.
+ * Whether the board is finished.
+ *
+ * Every row, column and region must hold exactly `stars` of them, and no two may
+ * touch. Counting rather than comparing pairs is what makes this work for both
+ * games: Queens wants one per line, Two Not Touch wants two, and "two in a row"
+ * is a mistake in one and the goal in the other.
  */
-export function conflictingCells(grid: Grid, regions: Regions): Set<string> {
+export function isSolved(grid: Grid, regions: Regions, stars = 1): boolean {
+  const size = grid.length
   const placed = placementsOf(grid)
-  const bad = new Set<string>()
+  if (placed.length !== size * stars) return false
+
+  const rows = new Array<number>(size).fill(0)
+  const columns = new Array<number>(size).fill(0)
+  const areas = new Array<number>(size).fill(0)
+  for (const { r, c } of placed) {
+    rows[r]++
+    columns[c]++
+    areas[regions[r][c]]++
+  }
+  for (let i = 0; i < size; i++) {
+    if (rows[i] !== stars || columns[i] !== stars || areas[i] !== stars) return false
+  }
+
   for (let i = 0; i < placed.length; i++) {
     for (let j = i + 1; j < placed.length; j++) {
-      const a = placed[i]
-      const b = placed[j]
-      const clash =
-        a.r === b.r ||
-        a.c === b.c ||
-        regions[a.r][a.c] === regions[b.r][b.c] ||
-        touches(a, b)
-      if (clash) {
-        bad.add(key(a))
-        bad.add(key(b))
-      }
+      if (touches(placed[i], placed[j])) return false
     }
   }
-  return bad
-}
-
-/** Exactly `size` emojis placed, breaking none of the three rules. */
-export function isSolved(grid: Grid, regions: Regions): boolean {
-  const placed = placementsOf(grid)
-  if (placed.length !== grid.length) return false
-  return conflictingCells(grid, regions).size === 0
+  return true
 }
 
 /** The three things a board must satisfy, in the order the UI lists them. */

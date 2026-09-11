@@ -4,6 +4,7 @@ import type { SolveRecord } from './types'
 
 const record = (id: string): SolveRecord => ({
   id,
+  game: 'queens',
   size: 7,
   seed: 123,
   genVersion: 1,

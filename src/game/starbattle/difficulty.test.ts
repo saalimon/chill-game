@@ -46,3 +46,25 @@ describe('difficultyOf', () => {
     expect(seen.size).toBeGreaterThan(1)
   })
 })
+
+describe('difficultyOf for Two Not Touch', () => {
+  it('judges it on its own scale, not the one-star game’s', () => {
+    // 400 branches is a hard 7x7 Queens and an easy 8x8 Two Not Touch.
+    expect(difficultyOf(7, 400, 'queens')).toBe('hard')
+    expect(difficultyOf(8, 400, 'twoNotTouch')).toBe('medium')
+  })
+
+  it('spreads real boards across more than one difficulty', () => {
+    const seen = new Set(
+      Array.from({ length: 40 }, (_, i) => {
+        const p = generate(8100 + i, 9, 'twoNotTouch')
+        return difficultyOf(p.size, p.nodes, 'twoNotTouch')
+      }),
+    )
+    expect(seen.size).toBeGreaterThan(1)
+  })
+
+  it('falls back to medium for a size the game does not offer', () => {
+    expect(difficultyOf(5, 999, 'twoNotTouch')).toBe('medium')
+  })
+})

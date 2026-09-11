@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { dateKey, dailyPuzzle, dailySpec } from './daily'
-import { SIZES } from './generate'
+import { GAME_IDS, GAMES } from './games'
 
 describe('dateKey', () => {
   it('formats a date as YYYY-MM-DD', () => {
@@ -28,11 +28,22 @@ describe('dailySpec', () => {
     expect(dailySpec('2026-09-10').seed).not.toBe(dailySpec('2026-09-11').seed)
   })
 
-  it('always picks a size from the ladder', () => {
+  it('always picks a size the chosen game actually offers', () => {
     for (let day = 1; day <= 28; day++) {
       const key = `2026-02-${String(day).padStart(2, '0')}`
-      expect(SIZES).toContain(dailySpec(key).size)
+      const spec = dailySpec(key)
+      expect(GAME_IDS).toContain(spec.game)
+      expect(GAMES[spec.game].sizes).toContain(spec.size)
     }
+  })
+
+  it('rotates through both games across a month', () => {
+    const games = new Set(
+      Array.from({ length: 28 }, (_, i) =>
+        dailySpec(`2026-02-${String(i + 1).padStart(2, '0')}`).game,
+      ),
+    )
+    expect(games.size).toBe(GAME_IDS.length)
   })
 
   it('varies the size across a month rather than always serving one board', () => {
@@ -58,5 +69,6 @@ describe('dailyPuzzle', () => {
     const puzzle = dailyPuzzle('2026-09-10')
     expect(puzzle.seed).toBe(spec.seed)
     expect(puzzle.size).toBe(spec.size)
+    expect(puzzle.game).toBe(spec.game)
   })
 })
